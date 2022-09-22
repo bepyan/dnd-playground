@@ -1,3 +1,9 @@
+import DragExample from '@/components/DragExample';
+
 export default function HomePage() {
-  return <div></div>;
+  return (
+    <div>
+      <DragExample />
+    </div>
+  );
 }
