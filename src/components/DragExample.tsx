@@ -6,8 +6,6 @@ export default function DragExample() {
   const dragRef = useRef({
     initX: NaN,
     initY: NaN,
-    deltaX: 0,
-    deltaY: 0,
   });
 
   const [{ x, y }, setPosition] = useState({
@@ -17,25 +15,23 @@ export default function DragExample() {
 
   return (
     <div className="p-20">
-      <h1 className="mb-3 text-lg font-bold">DRAG</h1>
+      <div className="mb-2">
+        <h1 className="text-3xl font-bold">Drag</h1>
+        <span>without bounce</span>
+      </div>
 
       <Boundary>
         <Box
-          style={{
-            left: dragRef.current.deltaX,
-            top: dragRef.current.deltaY,
-          }}
+          style={{ left: x, top: y }}
+          // style={{ transform: `translateX(${x}px) translateY(${y}px)` }}
           onMouseDown={(e) => {
             dragRef.current.initX = e.screenX - x;
             dragRef.current.initY = e.screenY - y;
 
             const mouseMoveHandler = (e: MouseEvent) => {
-              dragRef.current.deltaX = e.screenX - dragRef.current.initX;
-              dragRef.current.deltaY = e.screenY - dragRef.current.initY;
-
               setPosition({
-                x: dragRef.current.deltaX,
-                y: dragRef.current.deltaY,
+                x: e.screenX - dragRef.current.initX,
+                y: e.screenY - dragRef.current.initY,
               });
             };
             const mouseUpHandler = (e: MouseEvent) => {

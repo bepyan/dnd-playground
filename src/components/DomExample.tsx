@@ -16,7 +16,7 @@ export default function DomExample() {
   return (
     <div className="p-20">
       <div className="mb-2">
-        <h1 className="text-lg font-bold">DOM EVENT</h1>
+        <h1 className="text-3xl font-bold">DOM EVENT</h1>
         <span>watch the console log</span>
       </div>
       <Boundary

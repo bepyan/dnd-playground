@@ -4,7 +4,7 @@ export default function Boundary(props: React.ComponentProps<'div'>) {
   return (
     <div
       {...props}
-      className="relative h-64 overflow-hidden rounded bg-gray-50 dark:bg-[#121212]"
+      className="relative h-64 overflow-hidden rounded-xl bg-gray-50 dark:bg-[#121212]"
     />
   );
 }
