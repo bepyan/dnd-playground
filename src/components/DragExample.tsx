@@ -1,4 +1,6 @@
 import React, { useRef, useState } from 'react';
+import Boundary from './Boundary';
+import Box from './Box';
 
 export default function DragExample() {
   const dragRef = useRef({
@@ -17,9 +19,8 @@ export default function DragExample() {
     <div className="p-20">
       <h1 className="mb-3 text-lg font-bold">DRAG</h1>
 
-      <div className="relative h-64 overflow-hidden rounded bg-gray-50">
-        <div
-          className="absolute h-20 w-20 cursor-move rounded bg-white shadow-lg transition-[transform,shadow] active:scale-95 active:shadow-xl"
+      <Boundary>
+        <Box
           style={{
             left: dragRef.current.deltaX,
             top: dragRef.current.deltaY,
@@ -44,8 +45,8 @@ export default function DragExample() {
             document.addEventListener('mousemove', mouseMoveHandler);
             document.addEventListener('mouseup', mouseUpHandler, { once: true });
           }}
-        ></div>
-      </div>
+        ></Box>
+      </Boundary>
     </div>
   );
 }
