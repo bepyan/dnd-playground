@@ -1,13 +1,8 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import Boundary from './Boundary';
 import Box from './Box';
 
 export default function DragExample() {
-  const dragRef = useRef({
-    initX: NaN,
-    initY: NaN,
-  });
-
   const [{ x, y }, setPosition] = useState({
     x: 0,
     y: 0,
@@ -25,13 +20,13 @@ export default function DragExample() {
           style={{ left: x, top: y }}
           // style={{ transform: `translateX(${x}px) translateY(${y}px)` }}
           onMouseDown={(e) => {
-            dragRef.current.initX = e.screenX - x;
-            dragRef.current.initY = e.screenY - y;
+            const initX = e.screenX;
+            const initY = e.screenY;
 
             const mouseMoveHandler = (e: MouseEvent) => {
               setPosition({
-                x: e.screenX - dragRef.current.initX,
-                y: e.screenY - dragRef.current.initY,
+                x: x + e.screenX - initX,
+                y: y + e.screenY - initY,
               });
             };
             const mouseUpHandler = (e: MouseEvent) => {
