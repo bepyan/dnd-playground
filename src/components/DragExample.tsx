@@ -16,9 +16,9 @@ export default function DragExample() {
       </div>
 
       <Boundary>
-        <Box
-          style={{ left: x, top: y }}
-          // style={{ transform: `translateX(${x}px) translateY(${y}px)` }}
+        <div
+          // style={{ left: x, top: y }}
+          style={{ transform: `translateX(${x}px) translateY(${y}px)` }}
           onMouseDown={(e) => {
             const initX = e.screenX;
             const initY = e.screenY;
@@ -36,7 +36,9 @@ export default function DragExample() {
             document.addEventListener('mousemove', mouseMoveHandler);
             document.addEventListener('mouseup', mouseUpHandler, { once: true });
           }}
-        ></Box>
+        >
+          <Box />
+        </div>
       </Boundary>
     </div>
   );
