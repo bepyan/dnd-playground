@@ -1,4 +1,5 @@
 import DomExample from '@/components/DomExample';
+import DragBouceExample from '@/components/DragBouceExample';
 import DragExample from '@/components/DragExample';
 
 export default function HomePage() {
@@ -6,6 +7,7 @@ export default function HomePage() {
     <div>
       <DomExample />
       <DragExample />
+      <DragBouceExample />
     </div>
   );
 }

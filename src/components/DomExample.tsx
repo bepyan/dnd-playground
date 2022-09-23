@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Boundary from './Boundary';
 
 /*
@@ -13,16 +14,25 @@ screenX    -> in global (screen) coordinates.
 */
 
 export default function DomExample() {
+  const [{ x, y }, setPosition] = useState({
+    x: 0,
+    y: 0,
+  });
+
   return (
     <div className="p-20">
       <div className="mb-2">
         <h1 className="text-3xl font-bold">DOM EVENT</h1>
         <span>watch the console log</span>
+        <span className="ml-4">
+          screen x:{x} y:{y}
+        </span>
       </div>
       <Boundary
         onMouseDown={() => {
           const mouseMoveHandler = (e: MouseEvent) => {
             console.log(`mouse move x:${e.screenX} y:${e.screenY}`);
+            setPosition({ x: e.screenX, y: e.screenY });
           };
           const mouseUpHandler = (e: MouseEvent) => {
             console.warn(`>>>> mouse up x:${e.screenX} y:${e.screenY}`);

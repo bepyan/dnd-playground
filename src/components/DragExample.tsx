@@ -12,7 +12,10 @@ export default function DragExample() {
     <div className="p-20">
       <div className="mb-2">
         <h1 className="text-3xl font-bold">Drag</h1>
-        <span>without bounce</span>
+        <span>without boundary bounce</span>
+        <span className="ml-4">
+          x:{x} y:{y}
+        </span>
       </div>
 
       <Boundary>
