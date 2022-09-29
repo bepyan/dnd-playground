@@ -8,7 +8,9 @@ export default React.forwardRef<HTMLDivElement, React.ComponentProps<'div'>>(fun
     <div
       {...props}
       ref={ref}
-      className="relative grid h-64 items-center justify-center overflow-hidden rounded-xl bg-gray-200 dark:bg-[#121212]"
+      className={
+        'relative h-64 overflow-hidden rounded-xl bg-gray-200 dark:bg-[#121212] ' + props.className
+      }
     />
   );
 });

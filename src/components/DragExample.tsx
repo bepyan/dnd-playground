@@ -18,7 +18,7 @@ export default function DragExample() {
         </span>
       </div>
 
-      <Boundary>
+      <Boundary className="grid items-center justify-center">
         <div
           // style={{ left: x, top: y }}
           style={{ transform: `translateX(${x}px) translateY(${y}px)` }}

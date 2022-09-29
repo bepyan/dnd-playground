@@ -27,7 +27,7 @@ export default function DragBouceExample() {
         </span>
       </div>
 
-      <Boundary ref={boundaryRef}>
+      <Boundary ref={boundaryRef} className="grid items-center justify-center">
         <div
           style={{ transform: `translateX(${x}px) translateY(${y}px)` }}
           onMouseDown={(e) => {
