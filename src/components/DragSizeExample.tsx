@@ -18,11 +18,11 @@ export default function DragSizeExample() {
     const boundary = boundaryRef.current?.getBoundingClientRect();
 
     if (boundary) {
-      const defaultW = 120;
+      const defaultW = 240;
       const defulatH = 120;
       setConfig({
-        x: boundary.width / 2 - defaultW / 2,
-        y: boundary.height / 2 - defulatH / 2,
+        x: Math.floor(boundary.width / 2 - defaultW / 2),
+        y: Math.floor(boundary.height / 2 - defulatH / 2),
         w: defaultW,
         h: defulatH,
       });
@@ -63,8 +63,8 @@ export default function DragSizeExample() {
             className="absolute top-0 left-0 h-4 w-4 cursor-nw-resize bg-gray-700"
             {...registMouseDownDrag((deltaX, deltaY) => {
               setConfig({
-                x: w - deltaX <= MIN_W ? x : x + deltaX,
-                y: h - deltaY <= MIN_H ? y : y + deltaY,
+                x: Math.min(x + deltaX, x + (w - MIN_W)),
+                y: Math.min(y + deltaY, y + (h - MIN_H)),
                 w: Math.max(w - deltaX, MIN_W),
                 h: Math.max(h - deltaY, MIN_H),
               });
@@ -75,7 +75,7 @@ export default function DragSizeExample() {
             {...registMouseDownDrag((deltaX, deltaY) => {
               setConfig({
                 x,
-                y: h - deltaY <= MIN_H ? y : y + deltaY,
+                y: Math.min(y + deltaY, y + (h - MIN_H)),
                 w: Math.max(w + deltaX, MIN_W),
                 h: Math.max(h - deltaY, MIN_H),
               });
@@ -96,7 +96,7 @@ export default function DragSizeExample() {
             className="absolute bottom-0 left-0 h-4 w-4 cursor-sw-resize bg-gray-700"
             {...registMouseDownDrag((deltaX, deltaY) => {
               setConfig({
-                x: w - deltaX <= MIN_W ? x : x + deltaX,
+                x: Math.min(x + deltaX, x + (w - MIN_W)),
                 y,
                 w: Math.max(w - deltaX, MIN_W),
                 h: Math.max(h + deltaY, MIN_H),
@@ -108,3 +108,6 @@ export default function DragSizeExample() {
     </div>
   );
 }
+
+// w 80
+// x 321 -> 320 / deltaX 40 => x -> 280
