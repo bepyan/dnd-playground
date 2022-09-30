@@ -2,11 +2,18 @@ import registMouseDownDrag from '@/hooks/useMouseDownDrag';
 import { useEffect, useRef, useState } from 'react';
 import Boundary from './Boundary';
 
+const minmax = (v: number, min: number, max: number) => {
+  if (v < min) return min;
+  if (v > max) return max;
+  return v;
+};
+
 export default function DragSizeExample() {
   const MIN_W = 80;
   const MIN_H = 80;
 
   const boundaryRef = useRef<HTMLDivElement>(null);
+
   const [{ x, y, w, h }, setConfig] = useState({
     x: 0,
     y: 0,
@@ -27,13 +34,27 @@ export default function DragSizeExample() {
         h: defulatH,
       });
     }
-  }, [boundaryRef]);
+  }, []);
+
+  const getBoundaryPosition = () => {
+    if (!boundaryRef.current) return;
+
+    const BOUNDARY_MARGIN = 12;
+    const boundary = boundaryRef.current.getBoundingClientRect();
+
+    return {
+      maxx: boundary.width - w - BOUNDARY_MARGIN,
+      minx: BOUNDARY_MARGIN,
+      maxy: boundary.height - h - BOUNDARY_MARGIN,
+      miny: BOUNDARY_MARGIN,
+    };
+  };
 
   return (
     <div className="p-20">
       <div className="mb-2">
         <h1 className="text-3xl font-bold">Drag Size</h1>
-        <span>resize the element size like powerpoint</span>
+        <span>resize the element size with boundary</span>
         <span className="ml-4">
           x:{x} y:{y}
         </span>
@@ -43,65 +64,39 @@ export default function DragSizeExample() {
       </div>
       <Boundary ref={boundaryRef}>
         <div
-          className="relative bg-white"
-          style={{ transform: `translateX(${x}px) translateY(${y}px)`, width: w, height: h }}
+          style={{ width: w, height: h, left: x, top: y }}
+          className="relative"
+          {...registMouseDownDrag((deltaX, deltaY) => {
+            const boundaryPosition = getBoundaryPosition()!;
+            if (!boundaryPosition) return;
+
+            const { maxx, maxy, minx, miny } = getBoundaryPosition()!;
+            setConfig({
+              x: minmax(x + deltaX, minx, maxx),
+              y: minmax(y + deltaY, miny, maxy),
+              w,
+              h,
+            });
+          })}
         >
-          <div className="absolute bottom-0 top-0 left-0 right-0 p-4">
-            <div
-              className="h-full w-full cursor-move bg-gray-500"
-              {...registMouseDownDrag((deltaX, deltaY) => {
-                setConfig({
-                  x: x + deltaX,
-                  y: y + deltaY,
-                  w,
-                  h,
-                });
-              })}
-            />
-          </div>
+          <Box />
           <div
-            className="absolute top-0 left-0 h-4 w-4 cursor-nw-resize bg-gray-700"
+            className="absolute -bottom-1 -right-1 h-4 w-4 cursor-se-resize rounded-full bg-gray-500 opacity-50 transition-transform active:scale-110"
             {...registMouseDownDrag((deltaX, deltaY) => {
-              setConfig({
-                x: Math.min(x + deltaX, x + (w - MIN_W)),
-                y: Math.min(y + deltaY, y + (h - MIN_H)),
-                w: Math.max(w - deltaX, MIN_W),
-                h: Math.max(h - deltaY, MIN_H),
-              });
-            })}
-          />
-          <div
-            className="absolute top-0 right-0 h-4 w-4 cursor-ne-resize bg-gray-700"
-            {...registMouseDownDrag((deltaX, deltaY) => {
-              setConfig({
-                x,
-                y: Math.min(y + deltaY, y + (h - MIN_H)),
-                w: Math.max(w + deltaX, MIN_W),
-                h: Math.max(h - deltaY, MIN_H),
-              });
-            })}
-          />
-          <div
-            className="absolute bottom-0 right-0 h-4 w-4 cursor-se-resize bg-gray-700"
-            {...registMouseDownDrag((deltaX, deltaY) => {
+              if (!boundaryRef.current) return;
+
+              const BOUNDARY_MARGIN = 12;
+              const boundary = boundaryRef.current.getBoundingClientRect();
+              const maxx = boundary.width - BOUNDARY_MARGIN;
+              const maxy = boundary.height - BOUNDARY_MARGIN;
+
               setConfig({
                 x,
                 y,
-                w: Math.max(w + deltaX, MIN_W),
-                h: Math.max(h + deltaY, MIN_H),
+                w: Math.min(Math.max(w + deltaX, MIN_W), maxx - x),
+                h: Math.min(Math.max(h + deltaY, MIN_H), maxy - y),
               });
-            })}
-          />
-          <div
-            className="absolute bottom-0 left-0 h-4 w-4 cursor-sw-resize bg-gray-700"
-            {...registMouseDownDrag((deltaX, deltaY) => {
-              setConfig({
-                x: Math.min(x + deltaX, x + (w - MIN_W)),
-                y,
-                w: Math.max(w - deltaX, MIN_W),
-                h: Math.max(h + deltaY, MIN_H),
-              });
-            })}
+            }, true)}
           />
         </div>
       </Boundary>
@@ -109,5 +104,6 @@ export default function DragSizeExample() {
   );
 }
 
-// w 80
-// x 321 -> 320 / deltaX 40 => x -> 280
+const Box = () => (
+  <div className="absolute h-full w-full cursor-move rounded-xl bg-white shadow-xl ring-1 ring-gray-100 transition-[shadow,transform] active:scale-[0.97] active:shadow-lg" />
+);
