@@ -40,17 +40,17 @@ export default function DragBouceExample() {
                 const box = boxRef.current.getBoundingClientRect();
                 const BOUNDARY_MARGIN = 12;
 
-                const deltaX = x + e.pageX - initX;
-                const deltaY = y + e.pageY - initY;
+                const deltaX = e.pageX - initX;
+                const deltaY = e.pageY - initY;
 
                 setPosition({
                   x: minmax(
-                    deltaX,
+                    x + deltaX,
                     Math.floor(-boundary.width / 2 + box.width / 2 + BOUNDARY_MARGIN),
                     Math.floor(boundary.width / 2 - box.width / 2 - BOUNDARY_MARGIN),
                   ),
                   y: minmax(
-                    deltaY,
+                    y + deltaY,
                     Math.floor(-boundary.height / 2 + box.height / 2 + BOUNDARY_MARGIN),
                     Math.floor(boundary.height / 2 - box.height / 2 - BOUNDARY_MARGIN),
                   ),
