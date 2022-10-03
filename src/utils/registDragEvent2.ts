@@ -16,14 +16,14 @@ export default function registDragEvent({
         if (stopPropagation) touchEvent.stopPropagation();
 
         const touchMoveHandler = (moveEvent: TouchEvent) => {
-          const deltaX = moveEvent.touches[0].screenX - touchEvent.touches[0].screenX;
-          const deltaY = moveEvent.touches[0].screenY - touchEvent.touches[0].screenY;
+          const deltaX = moveEvent.touches[0].pageX - touchEvent.touches[0].pageX;
+          const deltaY = moveEvent.touches[0].pageY - touchEvent.touches[0].pageY;
           onDragChange?.(deltaX, deltaY);
         };
 
         const touchEndHandler = (moveEvent: TouchEvent) => {
-          const deltaX = moveEvent.touches[0].screenX - touchEvent.touches[0].screenX;
-          const deltaY = moveEvent.touches[0].screenY - touchEvent.touches[0].screenY;
+          const deltaX = moveEvent.changedTouches[0].pageX - touchEvent.changedTouches[0].pageX;
+          const deltaY = moveEvent.changedTouches[0].pageY - touchEvent.changedTouches[0].pageY;
           onDragEnd?.(deltaX, deltaY);
           document.removeEventListener('touchmove', touchMoveHandler);
         };
@@ -39,14 +39,14 @@ export default function registDragEvent({
       if (stopPropagation) clickEvent.stopPropagation();
 
       const mouseMoveHandler = (moveEvent: MouseEvent) => {
-        const deltaX = moveEvent.screenX - clickEvent.screenX;
-        const deltaY = moveEvent.screenY - clickEvent.screenY;
+        const deltaX = moveEvent.pageX - clickEvent.pageX;
+        const deltaY = moveEvent.pageY - clickEvent.pageY;
         onDragChange?.(deltaX, deltaY);
       };
 
       const mouseUpHandler = (moveEvent: MouseEvent) => {
-        const deltaX = moveEvent.screenX - clickEvent.screenX;
-        const deltaY = moveEvent.screenY - clickEvent.screenY;
+        const deltaX = moveEvent.pageX - clickEvent.pageX;
+        const deltaY = moveEvent.pageY - clickEvent.pageY;
         onDragEnd?.(deltaX, deltaY);
         document.removeEventListener('mousemove', mouseMoveHandler);
       };
