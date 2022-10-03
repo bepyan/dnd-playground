@@ -38,21 +38,6 @@ export default function DragSizeExample() {
     }
   }, []);
 
-  const registResize = (fn: (w: number, h: number) => void) => {
-    return registMouseDownDrag((deltaX, deltaY) => {
-      if (!boundaryRef.current) return;
-
-      const boundary = boundaryRef.current.getBoundingClientRect();
-      const maxx = boundary.width - BOUNDARY_MARGIN;
-      const maxy = boundary.height - BOUNDARY_MARGIN;
-
-      const resizew = Math.min(Math.max(w + deltaX, MIN_W), maxx - x);
-      const resizeh = Math.min(Math.max(h + deltaY, MIN_H), maxy - y);
-
-      fn(resizew, resizeh);
-    }, true);
-  };
-
   return (
     <div className="p-4">
       <div className="mb-2">
@@ -80,40 +65,139 @@ export default function DragSizeExample() {
 
             const boundary = boundaryRef.current.getBoundingClientRect();
 
-            const maxx = boundary.width - w - BOUNDARY_MARGIN;
-            const minx = BOUNDARY_MARGIN;
-            const maxy = boundary.height - h - BOUNDARY_MARGIN;
-            const miny = BOUNDARY_MARGIN;
-
             setConfig({
-              x: minmax(x + deltaX, minx, maxx),
-              y: minmax(y + deltaY, miny, maxy),
+              x: minmax(x + deltaX, BOUNDARY_MARGIN, boundary.width - w - BOUNDARY_MARGIN),
+              y: minmax(y + deltaY, BOUNDARY_MARGIN, boundary.height - h - BOUNDARY_MARGIN),
               w,
               h,
             });
           })}
         >
           <Box />
+
+          {/* 좌상단 */}
+          <div
+            className="absolute -top-1 -left-1 h-4 w-4 cursor-nw-resize"
+            style={{ backgroundColor: show ? '#12121250' : 'transparent' }}
+            {...registMouseDownDrag((deltaX, deltaY) => {
+              setConfig({
+                x: minmax(x + deltaX, BOUNDARY_MARGIN, x + w - MIN_W),
+                y: minmax(y + deltaY, BOUNDARY_MARGIN, y + h - MIN_H),
+                w: minmax(w - deltaX, MIN_W, x + w - BOUNDARY_MARGIN),
+                h: minmax(h - deltaY, MIN_H, y + h - BOUNDARY_MARGIN),
+              });
+            }, true)}
+          />
+          {/* 우상단 */}
+          <div
+            className="absolute -top-1 -right-1 h-4 w-4 cursor-ne-resize"
+            style={{ backgroundColor: show ? '#12121250' : 'transparent' }}
+            {...registMouseDownDrag((deltaX, deltaY) => {
+              if (!boundaryRef.current) return;
+
+              const boundary = boundaryRef.current.getBoundingClientRect();
+
+              setConfig({
+                x,
+                y: minmax(y + deltaY, BOUNDARY_MARGIN, y + h - MIN_H),
+                w: minmax(w + deltaX, MIN_W, boundary.width - x - BOUNDARY_MARGIN),
+                h: minmax(h - deltaY, MIN_H, y + h - BOUNDARY_MARGIN),
+              });
+            }, true)}
+          />
+          {/* 좌하단 */}
+          <div
+            className="absolute -bottom-1 -left-1 h-4 w-4 cursor-ne-resize"
+            style={{ backgroundColor: show ? '#12121250' : 'transparent' }}
+            {...registMouseDownDrag((deltaX, deltaY) => {
+              if (!boundaryRef.current) return;
+
+              const boundary = boundaryRef.current.getBoundingClientRect();
+
+              setConfig({
+                x: minmax(x + deltaX, BOUNDARY_MARGIN, x + w - MIN_W),
+                y,
+                w: minmax(w - deltaX, MIN_W, x + w - BOUNDARY_MARGIN),
+                h: minmax(h + deltaY, MIN_H, boundary.height - y - BOUNDARY_MARGIN),
+              });
+            }, true)}
+          />
+          {/* 우하단 */}
           <div
             className="absolute -bottom-1 -right-1 h-4 w-4 cursor-se-resize"
             style={{ backgroundColor: show ? '#12121250' : 'transparent' }}
-            {...registResize((w, h) => {
-              setConfig({ x, y, w, h });
-            })}
+            {...registMouseDownDrag((deltaX, deltaY) => {
+              if (!boundaryRef.current) return;
+
+              const boundary = boundaryRef.current.getBoundingClientRect();
+
+              setConfig({
+                x,
+                y,
+                w: minmax(w + deltaX, MIN_W, boundary.width - x - BOUNDARY_MARGIN),
+                h: minmax(h + deltaY, MIN_H, boundary.height - y - BOUNDARY_MARGIN),
+              });
+            }, true)}
           />
+          {/* 상단 */}
           <div
-            className="absolute bottom-3 top-3 -right-0.5 w-2 cursor-e-resize"
+            className="absolute -top-0.5 left-3 right-3 h-2 cursor-n-resize"
             style={{ backgroundColor: show ? '#12121250' : 'transparent' }}
-            {...registResize((w) => {
-              setConfig({ x, y, w, h });
-            })}
+            {...registMouseDownDrag((_, deltaY) => {
+              setConfig({
+                x,
+                y: minmax(y + deltaY, BOUNDARY_MARGIN, y + h - MIN_H),
+                w,
+                h: minmax(h - deltaY, MIN_H, y + h - BOUNDARY_MARGIN),
+              });
+            }, true)}
           />
+          {/* 하단 */}
           <div
             className="absolute -bottom-0.5 left-3 right-3 h-2 cursor-s-resize"
             style={{ backgroundColor: show ? '#12121250' : 'transparent' }}
-            {...registResize((_, h) => {
-              setConfig({ x, y, w, h });
-            })}
+            {...registMouseDownDrag((_, deltaY) => {
+              if (!boundaryRef.current) return;
+
+              const boundary = boundaryRef.current.getBoundingClientRect();
+
+              setConfig({
+                x,
+                y,
+                w,
+                h: minmax(h + deltaY, MIN_H, boundary.height - y - BOUNDARY_MARGIN),
+              });
+            }, true)}
+          />
+          {/* 우측 */}
+          <div
+            className="absolute bottom-3 top-3 -right-0.5 w-2 cursor-e-resize"
+            style={{ backgroundColor: show ? '#12121250' : 'transparent' }}
+            {...registMouseDownDrag((deltaX) => {
+              if (!boundaryRef.current) return;
+
+              const boundary = boundaryRef.current.getBoundingClientRect();
+
+              setConfig({
+                x,
+                y,
+                w: minmax(w + deltaX, MIN_W, boundary.width - x - BOUNDARY_MARGIN),
+                h,
+              });
+            }, true)}
+          />
+          {/* 좌측 */}
+          <div
+            className="absolute bottom-3 top-3 -left-0.5 w-2 cursor-w-resize"
+            style={{ backgroundColor: show ? '#12121250' : 'transparent' }}
+            {...registMouseDownDrag((deltaX) => {
+              setConfig({
+                x: minmax(x + deltaX, BOUNDARY_MARGIN, x + w - MIN_W),
+                y,
+                w: minmax(w - deltaX, MIN_W, x + w - BOUNDARY_MARGIN),
+                h,
+              });
+            }, true)}
           />
         </div>
       </Boundary>
