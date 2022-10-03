@@ -54,7 +54,7 @@ export default function DragSizeExample() {
   };
 
   return (
-    <div className="p-20">
+    <div className="p-4">
       <div className="mb-2">
         <h1 className="text-3xl font-bold">Drag Size</h1>
         <div>

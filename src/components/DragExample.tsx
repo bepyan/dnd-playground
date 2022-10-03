@@ -9,7 +9,7 @@ export default function DragExample() {
   });
 
   return (
-    <div className="p-20">
+    <div className="p-4">
       <div className="mb-2">
         <h1 className="text-3xl font-bold">Drag</h1>
         <span>without boundary bounce</span>

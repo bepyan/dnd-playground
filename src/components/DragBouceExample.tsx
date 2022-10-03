@@ -18,7 +18,7 @@ export default function DragBouceExample() {
   });
 
   return (
-    <div className="p-20">
+    <div className="p-4">
       <div className="mb-2">
         <h1 className="text-3xl font-bold">Drag Boundary</h1>
         <span>with boundary bounce</span>

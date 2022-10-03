@@ -1,6 +1,24 @@
 import '@/styles/globals.css';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
+import Link from 'next/link';
+
+const ALink = ({ href, title }: { href: string; title: string }) => {
+  const isCurrent = window.location.pathname === href;
+
+  return (
+    <Link href={href}>
+      <a
+        className={
+          'text-lg transition-all hover:drop-shadow-lg ' +
+          (isCurrent ? 'font-bold' : 'text-gray-500')
+        }
+      >
+        {title}
+      </a>
+    </Link>
+  );
+};
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -16,7 +34,15 @@ function MyApp({ Component, pageProps }: AppProps) {
           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"
         />
       </Head>
-      <Component {...pageProps} />
+
+      <div className="mx-auto max-w-3xl pb-10">
+        <div className="flex items-center gap-4 p-4">
+          <ALink href="/" title="Drag" />
+          <ALink href="/resize" title="Resize" />
+        </div>
+
+        <Component {...pageProps} />
+      </div>
     </>
   );
 }
