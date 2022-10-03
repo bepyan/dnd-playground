@@ -31,7 +31,7 @@ export default function DragTouchableExample() {
     <div className="p-4">
       <div className="mb-2">
         <h1 className="text-3xl font-bold">Touch Drag</h1>
-        <span>with touch event</span>
+        <span>mouse & touch event</span>
         <span className="ml-4">
           x:{Math.floor(x)} y:{Math.floor(y)}
         </span>
