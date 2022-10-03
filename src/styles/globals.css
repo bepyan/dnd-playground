@@ -15,6 +15,9 @@ body {
   position: fixed;
   overflow: hidden;
 }
+#__next {
+  overflow-y: scroll;
+}
 
 * {
   user-select: none;
