@@ -2,9 +2,11 @@ import '@/styles/globals.css';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 const ALink = ({ href, title }: { href: string; title: string }) => {
-  const isCurrent = window.location.pathname === href;
+  const route = useRouter();
+  const isCurrent = route.pathname === href;
 
   return (
     <Link href={href}>
