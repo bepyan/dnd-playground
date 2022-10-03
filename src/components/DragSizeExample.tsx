@@ -1,12 +1,7 @@
-import registMouseDownDrag from '@/hooks/useMouseDownDrag';
+import { inrange } from '@/utils';
+import registDragEvent from '@/utils/registDragEvent';
 import { useEffect, useRef, useState } from 'react';
 import Boundary from './Boundary';
-
-const minmax = (v: number, min: number, max: number) => {
-  if (v < min) return min;
-  if (v > max) return max;
-  return v;
-};
 
 const BOUNDARY_MARGIN = 12;
 const MIN_W = 80;
@@ -45,10 +40,10 @@ export default function DragSizeExample() {
         <div>
           <span>resize the element size with boundary</span>
           <span className="ml-4">
-            x:{x} y:{y}
+            x:{Math.floor(x)} y:{Math.floor(y)}
           </span>
           <span className="ml-4">
-            w:{w} h:{h}
+            w:{Math.floor(w)} h:{Math.floor(h)}
           </span>
         </div>
         <div className="flex items-center gap-1">
@@ -60,14 +55,14 @@ export default function DragSizeExample() {
         <div
           style={{ width: w, height: h, left: x, top: y }}
           className="relative"
-          {...registMouseDownDrag((deltaX, deltaY) => {
+          {...registDragEvent((deltaX, deltaY) => {
             if (!boundaryRef.current) return;
 
             const boundary = boundaryRef.current.getBoundingClientRect();
 
             setConfig({
-              x: minmax(x + deltaX, BOUNDARY_MARGIN, boundary.width - w - BOUNDARY_MARGIN),
-              y: minmax(y + deltaY, BOUNDARY_MARGIN, boundary.height - h - BOUNDARY_MARGIN),
+              x: inrange(x + deltaX, BOUNDARY_MARGIN, boundary.width - w - BOUNDARY_MARGIN),
+              y: inrange(y + deltaY, BOUNDARY_MARGIN, boundary.height - h - BOUNDARY_MARGIN),
               w,
               h,
             });
@@ -79,12 +74,12 @@ export default function DragSizeExample() {
           <div
             className="absolute -top-1 -left-1 h-4 w-4 cursor-nw-resize"
             style={{ backgroundColor: show ? '#12121250' : 'transparent' }}
-            {...registMouseDownDrag((deltaX, deltaY) => {
+            {...registDragEvent((deltaX, deltaY) => {
               setConfig({
-                x: minmax(x + deltaX, BOUNDARY_MARGIN, x + w - MIN_W),
-                y: minmax(y + deltaY, BOUNDARY_MARGIN, y + h - MIN_H),
-                w: minmax(w - deltaX, MIN_W, x + w - BOUNDARY_MARGIN),
-                h: minmax(h - deltaY, MIN_H, y + h - BOUNDARY_MARGIN),
+                x: inrange(x + deltaX, BOUNDARY_MARGIN, x + w - MIN_W),
+                y: inrange(y + deltaY, BOUNDARY_MARGIN, y + h - MIN_H),
+                w: inrange(w - deltaX, MIN_W, x + w - BOUNDARY_MARGIN),
+                h: inrange(h - deltaY, MIN_H, y + h - BOUNDARY_MARGIN),
               });
             }, true)}
           />
@@ -92,16 +87,16 @@ export default function DragSizeExample() {
           <div
             className="absolute -top-1 -right-1 h-4 w-4 cursor-ne-resize"
             style={{ backgroundColor: show ? '#12121250' : 'transparent' }}
-            {...registMouseDownDrag((deltaX, deltaY) => {
+            {...registDragEvent((deltaX, deltaY) => {
               if (!boundaryRef.current) return;
 
               const boundary = boundaryRef.current.getBoundingClientRect();
 
               setConfig({
                 x,
-                y: minmax(y + deltaY, BOUNDARY_MARGIN, y + h - MIN_H),
-                w: minmax(w + deltaX, MIN_W, boundary.width - x - BOUNDARY_MARGIN),
-                h: minmax(h - deltaY, MIN_H, y + h - BOUNDARY_MARGIN),
+                y: inrange(y + deltaY, BOUNDARY_MARGIN, y + h - MIN_H),
+                w: inrange(w + deltaX, MIN_W, boundary.width - x - BOUNDARY_MARGIN),
+                h: inrange(h - deltaY, MIN_H, y + h - BOUNDARY_MARGIN),
               });
             }, true)}
           />
@@ -109,16 +104,16 @@ export default function DragSizeExample() {
           <div
             className="absolute -bottom-1 -left-1 h-4 w-4 cursor-ne-resize"
             style={{ backgroundColor: show ? '#12121250' : 'transparent' }}
-            {...registMouseDownDrag((deltaX, deltaY) => {
+            {...registDragEvent((deltaX, deltaY) => {
               if (!boundaryRef.current) return;
 
               const boundary = boundaryRef.current.getBoundingClientRect();
 
               setConfig({
-                x: minmax(x + deltaX, BOUNDARY_MARGIN, x + w - MIN_W),
+                x: inrange(x + deltaX, BOUNDARY_MARGIN, x + w - MIN_W),
                 y,
-                w: minmax(w - deltaX, MIN_W, x + w - BOUNDARY_MARGIN),
-                h: minmax(h + deltaY, MIN_H, boundary.height - y - BOUNDARY_MARGIN),
+                w: inrange(w - deltaX, MIN_W, x + w - BOUNDARY_MARGIN),
+                h: inrange(h + deltaY, MIN_H, boundary.height - y - BOUNDARY_MARGIN),
               });
             }, true)}
           />
@@ -126,7 +121,7 @@ export default function DragSizeExample() {
           <div
             className="absolute -bottom-1 -right-1 h-4 w-4 cursor-se-resize"
             style={{ backgroundColor: show ? '#12121250' : 'transparent' }}
-            {...registMouseDownDrag((deltaX, deltaY) => {
+            {...registDragEvent((deltaX, deltaY) => {
               if (!boundaryRef.current) return;
 
               const boundary = boundaryRef.current.getBoundingClientRect();
@@ -134,8 +129,8 @@ export default function DragSizeExample() {
               setConfig({
                 x,
                 y,
-                w: minmax(w + deltaX, MIN_W, boundary.width - x - BOUNDARY_MARGIN),
-                h: minmax(h + deltaY, MIN_H, boundary.height - y - BOUNDARY_MARGIN),
+                w: inrange(w + deltaX, MIN_W, boundary.width - x - BOUNDARY_MARGIN),
+                h: inrange(h + deltaY, MIN_H, boundary.height - y - BOUNDARY_MARGIN),
               });
             }, true)}
           />
@@ -143,12 +138,12 @@ export default function DragSizeExample() {
           <div
             className="absolute -top-0.5 left-3 right-3 h-2 cursor-n-resize"
             style={{ backgroundColor: show ? '#12121250' : 'transparent' }}
-            {...registMouseDownDrag((_, deltaY) => {
+            {...registDragEvent((_, deltaY) => {
               setConfig({
                 x,
-                y: minmax(y + deltaY, BOUNDARY_MARGIN, y + h - MIN_H),
+                y: inrange(y + deltaY, BOUNDARY_MARGIN, y + h - MIN_H),
                 w,
-                h: minmax(h - deltaY, MIN_H, y + h - BOUNDARY_MARGIN),
+                h: inrange(h - deltaY, MIN_H, y + h - BOUNDARY_MARGIN),
               });
             }, true)}
           />
@@ -156,7 +151,7 @@ export default function DragSizeExample() {
           <div
             className="absolute -bottom-0.5 left-3 right-3 h-2 cursor-s-resize"
             style={{ backgroundColor: show ? '#12121250' : 'transparent' }}
-            {...registMouseDownDrag((_, deltaY) => {
+            {...registDragEvent((_, deltaY) => {
               if (!boundaryRef.current) return;
 
               const boundary = boundaryRef.current.getBoundingClientRect();
@@ -165,7 +160,7 @@ export default function DragSizeExample() {
                 x,
                 y,
                 w,
-                h: minmax(h + deltaY, MIN_H, boundary.height - y - BOUNDARY_MARGIN),
+                h: inrange(h + deltaY, MIN_H, boundary.height - y - BOUNDARY_MARGIN),
               });
             }, true)}
           />
@@ -173,7 +168,7 @@ export default function DragSizeExample() {
           <div
             className="absolute bottom-3 top-3 -right-0.5 w-2 cursor-e-resize"
             style={{ backgroundColor: show ? '#12121250' : 'transparent' }}
-            {...registMouseDownDrag((deltaX) => {
+            {...registDragEvent((deltaX) => {
               if (!boundaryRef.current) return;
 
               const boundary = boundaryRef.current.getBoundingClientRect();
@@ -181,7 +176,7 @@ export default function DragSizeExample() {
               setConfig({
                 x,
                 y,
-                w: minmax(w + deltaX, MIN_W, boundary.width - x - BOUNDARY_MARGIN),
+                w: inrange(w + deltaX, MIN_W, boundary.width - x - BOUNDARY_MARGIN),
                 h,
               });
             }, true)}
@@ -190,11 +185,11 @@ export default function DragSizeExample() {
           <div
             className="absolute bottom-3 top-3 -left-0.5 w-2 cursor-w-resize"
             style={{ backgroundColor: show ? '#12121250' : 'transparent' }}
-            {...registMouseDownDrag((deltaX) => {
+            {...registDragEvent((deltaX) => {
               setConfig({
-                x: minmax(x + deltaX, BOUNDARY_MARGIN, x + w - MIN_W),
+                x: inrange(x + deltaX, BOUNDARY_MARGIN, x + w - MIN_W),
                 y,
-                w: minmax(w - deltaX, MIN_W, x + w - BOUNDARY_MARGIN),
+                w: inrange(w - deltaX, MIN_W, x + w - BOUNDARY_MARGIN),
                 h,
               });
             }, true)}

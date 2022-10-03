@@ -22,7 +22,7 @@ export default function DomExample() {
   return (
     <div className="p-4">
       <div className="mb-2">
-        <h1 className="text-3xl font-bold">DOM EVENT</h1>
+        <h1 className="text-3xl font-bold">DOM Event</h1>
         <span>watch the console log</span>
         <span className="ml-4">
           screen x:{x} y:{y}

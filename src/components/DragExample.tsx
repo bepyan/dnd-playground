@@ -20,6 +20,7 @@ export default function DragExample() {
 
       <Boundary className="grid items-center justify-center">
         <div
+          className="h-24 w-24"
           // style={{ left: x, top: y }}
           style={{ transform: `translateX(${x}px) translateY(${y}px)` }}
           onMouseDown={(e) => {

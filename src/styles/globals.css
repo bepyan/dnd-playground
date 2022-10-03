@@ -9,6 +9,13 @@ body,
   height: 100%;
 }
 
+/* MW scroll bounce 제거 */
+html,
+body {
+  position: fixed;
+  overflow: hidden;
+}
+
 * {
   user-select: none;
   scrollbar-width: none;

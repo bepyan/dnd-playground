@@ -1,12 +1,7 @@
+import { inrange } from '@/utils';
 import React, { useRef, useState } from 'react';
 import Boundary from './Boundary';
 import Box from './Box';
-
-const minmax = (v: number, min: number, max: number) => {
-  if (v < min) return min;
-  if (v > max) return max;
-  return v;
-};
 
 export default function DragBouceExample() {
   const boundaryRef = useRef<HTMLDivElement>(null);
@@ -29,6 +24,7 @@ export default function DragBouceExample() {
 
       <Boundary ref={boundaryRef} className="grid items-center justify-center">
         <div
+          className="h-24 w-24"
           style={{ transform: `translateX(${x}px) translateY(${y}px)` }}
           onMouseDown={(e) => {
             const initX = e.pageX;
@@ -44,12 +40,12 @@ export default function DragBouceExample() {
                 const deltaY = e.pageY - initY;
 
                 setPosition({
-                  x: minmax(
+                  x: inrange(
                     x + deltaX,
                     Math.floor(-boundary.width / 2 + box.width / 2 + BOUNDARY_MARGIN),
                     Math.floor(boundary.width / 2 - box.width / 2 - BOUNDARY_MARGIN),
                   ),
-                  y: minmax(
+                  y: inrange(
                     y + deltaY,
                     Math.floor(-boundary.height / 2 + box.height / 2 + BOUNDARY_MARGIN),
                     Math.floor(boundary.height / 2 - box.height / 2 - BOUNDARY_MARGIN),
