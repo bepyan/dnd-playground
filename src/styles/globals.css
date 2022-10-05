@@ -44,7 +44,7 @@ body {
 /* dnd styling */
 
 .dnd-item {
-  @apply rounded-lg bg-white p-4 transition-shadow dark:bg-[#121212];
+  @apply transition-shadow;
 }
 
 .dnd-item.placeholder {
