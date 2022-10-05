@@ -17,6 +17,7 @@ body {
 }
 #__next {
   overflow-y: scroll;
+  position: relative;
 }
 
 * {
@@ -38,4 +39,22 @@ body {
     color: #eeeeee;
     background: black;
   }
+}
+
+/* dnd styling */
+
+.dnd-item {
+  @apply rounded-lg bg-white p-4 transition-shadow dark:bg-[#121212];
+}
+
+.dnd-item.placeholder {
+  @apply border border-blue-500 opacity-50 ring-2 ring-blue-400;
+}
+
+.dnd-item:not(.ghost) {
+  @apply cursor-grab shadow;
+}
+
+.dnd-item.ghost {
+  @apply cursor-grabbing transition-[shadow,transform,opacity];
 }
