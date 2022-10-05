@@ -43,6 +43,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <ALink href="/touch" title="Touch" />
           <ALink href="/resize" title="Resize" />
           <ALink href="/carousel" title="Carousel" />
+          <ALink href="/dnd" title="DND" />
         </div>
 
         <Component {...pageProps} />
