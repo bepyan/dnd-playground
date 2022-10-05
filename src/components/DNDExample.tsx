@@ -24,7 +24,10 @@ export default function DNDExample({
         ghostItem.style.left = `${itemRect.left}px`;
         ghostItem.style.width = `${itemRect.width}px`;
         ghostItem.style.height = `${itemRect.height}px`;
+        ghostItem.style.transition =
+          'transform 200ms ease, opacity 200ms ease, boxShadow 200ms ease';
         ghostItem.classList.add('ghost');
+
         item.classList.add('placeholder');
 
         setTimeout(() => {
@@ -46,10 +49,33 @@ export default function DNDExample({
       },
       onDragEnd: ({}, props) => {
         if (!props) return;
-        const { ghostItem, item } = props;
+        const { ghostItem, item, itemRect } = props;
 
-        ghostItem.remove();
         item.classList.remove('placeholder');
+
+        const ghostItemRect = ghostItem.getBoundingClientRect();
+        ghostItem.style.transition = 'all 200ms ease';
+        ghostItem.style.left = `${itemRect.left}px`;
+        ghostItem.style.top = `${itemRect.top}px`;
+        ghostItem.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.15)';
+        ghostItem.style.transform = 'none';
+        ghostItem.style.opacity = '1';
+
+        const clear = () => {
+          ghostItem.remove();
+        };
+
+        if (ghostItemRect.left === itemRect.left && ghostItemRect.top === itemRect.top) {
+          clear();
+        } else {
+          ghostItem.addEventListener(
+            'transitionend',
+            () => {
+              clear();
+            },
+            { once: true },
+          );
+        }
       },
     });
   }, []);

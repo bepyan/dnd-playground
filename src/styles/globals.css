@@ -44,7 +44,7 @@ body {
 /* dnd styling */
 
 .dnd-item {
-  @apply transition-shadow;
+  @apply border border-transparent transition-shadow;
 }
 
 .dnd-item.placeholder {
@@ -56,5 +56,5 @@ body {
 }
 
 .dnd-item.ghost {
-  @apply cursor-grabbing transition-[shadow,transform,opacity];
+  @apply cursor-grabbing border-2 border-blue-400;
 }
