@@ -1,29 +1,15 @@
+import { TItems, TItemType } from '@/pages/dnd';
 import { $ } from '@/utils';
 import { useEffect, useState } from 'react';
 import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
 
-type TItemType = 'todo' | 'doing';
-
-type TItem = {
-  id: string;
-  type: TItemType;
-  title: string;
-  index: number;
-};
-
-export default function DNDLibraryExample() {
-  const [items, setItems] = useState<{
-    [key in TItemType]: TItem[];
-  }>({
-    todo: [...Array(5)].map((_, i) => ({
-      id: `${i}${i}${i}`,
-      title: `Title ${i + 1}000`,
-      type: 'todo',
-      index: i,
-    })),
-    doing: [],
-  });
-
+export default function DNDLibraryExample({
+  items,
+  setItems,
+}: {
+  items: TItems;
+  setItems: (items: TItems) => void;
+}) {
   const onDragEnd = (result: DropResult) => {
     const { source, destination } = result;
     if (!destination) return;
