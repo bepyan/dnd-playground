@@ -22,7 +22,7 @@ export default function CarouselExample() {
   return (
     <>
       <div className="p-4">
-        <div className="mb-2">
+        <div className="mb-2 whitespace-nowrap">
           <h1 className="text-3xl font-bold">Carousel</h1>
           <span>slide width darg</span>
           <span className="ml-4">current index {currentIndex}</span>
@@ -45,7 +45,6 @@ export default function CarouselExample() {
         <div
           className="flex"
           style={{
-            width: SLIDER_WIDTH,
             transform: `translateX(${-currentIndex * SLIDER_WIDTH + transX}px)`,
             transition: `transform ${transX ? 0 : 300}ms ease-in-out 0s`,
           }}
