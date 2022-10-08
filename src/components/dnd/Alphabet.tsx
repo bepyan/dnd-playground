@@ -5,7 +5,7 @@ export const DropAlphabet = (props: { value: string } & React.ComponentProps<'di
     <div
       {...props}
       className={$(
-        'text-shadow text-9xl font-black text-white drop-shadow-xl transition-all',
+        'text-shadow text-9xl font-black text-white drop-shadow-xl transition-opacity',
         props.className,
       )}
     >

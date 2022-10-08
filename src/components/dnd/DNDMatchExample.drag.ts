@@ -64,8 +64,9 @@ export const registDND = () => {
 
     const mouseUpHandler = (moveEvent: MouseEvent) => {
       const dropItem = document.querySelector<HTMLElement>('.dnd-drop-area.active');
+      const isCorrect = item.innerText === dropItem?.innerText;
 
-      if (dropItem) {
+      if (isCorrect) {
         // 이동
         const dropItemRect = dropItem.getBoundingClientRect();
         ghostItem.style.left = `${dropItemRect.left}px`;
@@ -85,8 +86,21 @@ export const registDND = () => {
           item.removeAttribute('style');
           document.body.removeAttribute('style');
 
-          dropItem?.classList.remove('active');
-          dropItem?.removeAttribute('style');
+          if (dropItem) {
+            dropItem.classList.remove('active');
+            dropItem.removeAttribute('style');
+
+            if (!isCorrect) {
+              item.classList.add('shake');
+              item.addEventListener(
+                'animationend',
+                () => {
+                  item.classList.remove('shake');
+                },
+                { once: true },
+              );
+            }
+          }
 
           ghostItem.remove();
         },
