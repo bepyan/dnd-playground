@@ -1,9 +1,9 @@
-import { TItems, TItemType } from '@/pages/dnd';
+import { TItems, TItemType } from '@/pages/todo';
 import { $ } from '@/utils';
 import { useEffect, useState } from 'react';
 import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
 
-export default function DNDLibraryExample({
+export default function TodoLibraryExample({
   items,
   setItems,
 }: {

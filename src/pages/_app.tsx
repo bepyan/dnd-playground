@@ -44,6 +44,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <ALink href="/resize" title="Resize" />
           <ALink href="/carousel" title="Carousel" />
           <ALink href="/dnd" title="DND" />
+          <ALink href="/todo" title="TODO" />
         </div>
 
         <Component {...pageProps} />

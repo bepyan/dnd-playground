@@ -56,5 +56,5 @@ body {
 }
 
 .dnd-item.ghost {
-  @apply cursor-grabbing border-2 border-blue-400;
+  @apply cursor-grabbing border-2 border-blue-400 pointer-events-none;
 }
