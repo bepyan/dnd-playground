@@ -1,7 +1,35 @@
 export const registDND = (
   onDrop: (props: { source: string; destination: string; isCorrect: boolean }) => void,
 ) => {
-  const startEvent = (startEvent: MouseEvent) => {
+  const isTouchScreen =
+    typeof window !== 'undefined' &&
+    window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+
+  const startEventName = isTouchScreen ? 'touchstart' : 'mousedown';
+  const moveEventName = isTouchScreen ? 'touchmove' : 'mousemove';
+  const endEventName = isTouchScreen ? 'touchend' : 'mouseup';
+
+  const getDelta = (startEvent: MouseEvent | TouchEvent, moveEvent: MouseEvent | TouchEvent) => {
+    if (isTouchScreen) {
+      const se = startEvent as TouchEvent;
+      const me = moveEvent as TouchEvent;
+
+      return {
+        deltaX: me.touches[0].pageX - se.touches[0].pageX,
+        deltaY: me.touches[0].pageY - se.touches[0].pageY,
+      };
+    }
+
+    const se = startEvent as MouseEvent;
+    const me = moveEvent as MouseEvent;
+
+    return {
+      deltaX: me.pageX - se.pageX,
+      deltaY: me.pageY - se.pageY,
+    };
+  };
+
+  const startHandler = (startEvent: MouseEvent | TouchEvent) => {
     const item = startEvent.target as HTMLElement;
     if (
       !item.classList.contains('dnd-drag-item') ||
@@ -36,10 +64,9 @@ export const registDND = (
     document.body.appendChild(ghostItem);
     // Ghost 만들기 END
 
-    const mouseMoveHandler = (moveEvent: MouseEvent) => {
+    const moveHandler = (moveEvent: MouseEvent | TouchEvent) => {
       // Ghost Drag
-      const deltaX = moveEvent.pageX - startEvent.pageX;
-      const deltaY = moveEvent.pageY - startEvent.pageY;
+      const { deltaX, deltaY } = getDelta(startEvent, moveEvent);
 
       ghostItem.style.top = `${itemRect.top + deltaY}px`;
       ghostItem.style.left = `${itemRect.left + deltaX}px`;
@@ -64,7 +91,7 @@ export const registDND = (
       }
     };
 
-    const mouseUpHandler = (moveEvent: MouseEvent) => {
+    const endHandler = () => {
       const dropItem = document.querySelector<HTMLElement>('.dnd-drop-area.active');
       const isCorrect = item.innerText === dropItem?.innerText;
 
@@ -118,13 +145,13 @@ export const registDND = (
         { once: true },
       );
 
-      document.removeEventListener('mousemove', mouseMoveHandler);
+      document.removeEventListener(moveEventName, moveHandler);
     };
 
-    document.addEventListener('mousemove', mouseMoveHandler);
-    document.addEventListener('mouseup', mouseUpHandler, { once: true });
+    document.addEventListener(moveEventName, moveHandler);
+    document.addEventListener(endEventName, endHandler, { once: true });
   };
 
-  document.addEventListener('mousedown', startEvent);
-  return () => document.removeEventListener('mousedown', startEvent);
+  document.addEventListener(startEventName, startHandler);
+  return () => document.removeEventListener(startEventName, startHandler);
 };
