@@ -2,6 +2,7 @@ import Confettiful from './Confettiful';
 import { useEffect, useMemo, useState } from 'react';
 import { DragAlphabet, DropAlphabet } from './Alphabet';
 import { registDND } from './DNDMatchExample.drag';
+import { $ } from '@/utils';
 
 let cleanConfetti: () => void | undefined;
 const WORDS = [...Array(26)].map((_, i) => String.fromCharCode(i + 65));
@@ -14,6 +15,7 @@ export default function DNDMatchExample() {
   const [words, setWords] = useState<string[]>(getRandomWords(4));
   const [correctWords, setCorrectWords] = useState<string[]>([]);
   const dragWords = useMemo(() => [...words].sort(() => Math.random() - 0.5), [words]);
+  const isClear = useMemo(() => correctWords.length === words.length, [correctWords, words]);
 
   const reset = () => {
     setWords(getRandomWords(4));
@@ -38,24 +40,28 @@ export default function DNDMatchExample() {
   }, [ready]);
 
   useEffect(() => {
-    if (correctWords.length === words.length) {
+    if (isClear) {
       cleanConfetti = Confettiful();
     } else {
       cleanConfetti?.();
     }
-  }, [correctWords, words]);
+
+    return () => {
+      cleanConfetti?.();
+    };
+  }, [isClear]);
 
   if (!ready) return <></>;
 
   return (
-    <div className="flex flex-col items-center gap-16">
-      <div className="flex gap-8">
+    <div className="relative mt-16 flex flex-col items-center gap-16">
+      <div className={$('flex gap-6', isClear && 'opacity-50')}>
         {words.map((value) => (
           <DropAlphabet isCorrect={correctWords.includes(value)} key={value} value={value} />
         ))}
       </div>
 
-      <div className="flex gap-8">
+      <div className="flex gap-6">
         {dragWords.map((value) => (
           <DragAlphabet isCorrect={correctWords.includes(value)} key={value} value={value} />
         ))}
@@ -74,10 +80,17 @@ export default function DNDMatchExample() {
           </svg>
         </div>
 
-        {correctWords.length === words.length && (
-          <div className="font-black uppercase">congraculation</div>
-        )}
+        {isClear && <div className="font-black uppercase">congraculation</div>}
       </div>
+
+      {isClear && (
+        <div
+          className="absolute top-16 -rotate-12 cursor-pointer text-8xl font-black uppercase"
+          onClick={reset}
+        >
+          clear
+        </div>
+      )}
     </div>
   );
 }

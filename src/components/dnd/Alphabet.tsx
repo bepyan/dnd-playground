@@ -10,7 +10,7 @@ export const DropAlphabet = ({
       {...props}
       className={$(
         isCorrect ? 'text-stone-700' : 'dnd-drop-area text-white',
-        'text-shadow text-9xl font-black drop-shadow-xl ',
+        'text-shadow text-7xl font-black drop-shadow-xl ',
         props.className,
       )}
     >
@@ -29,7 +29,7 @@ export const DragAlphabet = ({
       {...props}
       className={$(
         isCorrect ? 'opacity-50' : 'dnd-drag-item cursor-grab',
-        'text-9xl font-black text-stone-700 drop-shadow-xl',
+        'text-7xl font-black text-stone-700 drop-shadow-xl',
         props.className,
       )}
     >
