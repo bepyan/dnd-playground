@@ -1,6 +1,6 @@
-import DomExample from '@/components/DomExample';
-import DragBouceExample from '@/components/DragBouceExample';
-import DragExample from '@/components/DragExample';
+import DomExample from '@/components/drag/DomExample';
+import DragBouceExample from '@/components/drag/DragBouceExample';
+import DragExample from '@/components/drag/DragExample';
 
 export default function HomePage() {
   return (

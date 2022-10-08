@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Boundary from './Boundary';
+import Boundary from '../Boundary';
 
 export default function TouchExample() {
   const [{ x, y }, setPosition] = useState({

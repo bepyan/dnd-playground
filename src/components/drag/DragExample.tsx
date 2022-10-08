@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Boundary from './Boundary';
-import Box from './Box';
+import Boundary from '../Boundary';
+import Box from '../Box';
 
 export default function DragExample() {
   const [{ x, y }, setPosition] = useState({

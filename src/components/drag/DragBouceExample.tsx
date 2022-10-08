@@ -1,7 +1,7 @@
 import { inrange } from '@/utils';
 import React, { useRef, useState } from 'react';
-import Boundary from './Boundary';
-import Box from './Box';
+import Boundary from '../Boundary';
+import Box from '../Box';
 
 export default function DragBouceExample() {
   const boundaryRef = useRef<HTMLDivElement>(null);

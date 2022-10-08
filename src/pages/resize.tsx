@@ -1,4 +1,4 @@
-import DragSizeExample from '@/components/DragSizeExample';
+import DragSizeExample from '@/components/resize/DragSizeExample';
 
 export default function ResizePage() {
   return (

@@ -1,5 +1,5 @@
-import CarouselExample from '@/components/CarouselExample';
-import CarouselInfiniteExample from '@/components/CarouselInfiniteExample';
+import CarouselExample from '@/components/carousel/CarouselExample';
+import CarouselInfiniteExample from '@/components/carousel/CarouselInfiniteExample';
 
 export default function CarouselPage() {
   return (

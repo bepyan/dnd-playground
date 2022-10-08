@@ -1,8 +1,8 @@
 import { inrange } from '@/utils';
 import registDragEvent from '@/utils/registDragEvent';
 import { useEffect, useRef, useState } from 'react';
-import Boundary from './Boundary';
-import Box from './Box';
+import Boundary from '../Boundary';
+import Box from '../Box';
 
 const BOUNDARY_MARGIN = 12;
 const DEFAULT_W = 240;

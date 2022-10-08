@@ -1,5 +1,5 @@
-import TodoExample from '@/components/TodoExample';
-import TodoLibraryExample from '@/components/TodoLibraryExample';
+import TodoExample from '@/components/todo/TodoExample';
+import TodoLibraryExample from '@/components/todo/TodoLibraryExample';
 import { useState } from 'react';
 
 export type TItemType = 'todo' | 'doing';
