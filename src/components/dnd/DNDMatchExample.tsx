@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { DragAlphabet, DropAlphabet } from './Alphabet';
+import { registDND } from './DNDMatchExample.drag';
 
 const WORDS = [...Array(26)].map((_, i) => String.fromCharCode(i + 65));
 
@@ -13,101 +14,36 @@ export default function DNDMatchExample() {
 
   // CSR
   const [ready, setReady] = useState(false);
-  useEffect(() => setReady(true), []);
+  useEffect(() => {
+    if (!ready) {
+      setReady(true);
+      return;
+    }
+
+    const cleanup = registDND();
+    return () => cleanup();
+  }, [ready]);
+
   if (!ready) return <></>;
 
   return (
     <div className="flex flex-col items-center gap-16">
       <div className="flex gap-8">
-        {words.map((value, index) => (
+        {words.map((value) => (
           <DropAlphabet className="dnd-drop-area" key={value} value={value} />
         ))}
       </div>
 
       <div className="flex gap-8">
-        {dragWords.map((value, index) => (
-          <DragAlphabet
-            className="dnd-drag-item"
-            key={value}
-            value={value}
-            onMouseDown={(clickEvent: React.MouseEvent<Element, MouseEvent>) => {
-              const item = clickEvent.currentTarget as HTMLElement;
-              const itemRect = item.getBoundingClientRect();
-              const dropAreaList = document.querySelectorAll<HTMLElement>('.dnd-drop-area');
-
-              // Ghost 만들기
-              const ghostItem = item.cloneNode(true) as HTMLElement;
-              ghostItem.classList.add('ghost');
-              ghostItem.style.position = 'fixed';
-              ghostItem.style.top = `${itemRect.top}px`;
-              ghostItem.style.left = `${itemRect.left}px`;
-              ghostItem.style.transition = 'transform 200ms ease';
-              ghostItem.style.pointerEvents = 'none';
-
-              setTimeout(() => {
-                ghostItem.style.textShadow = '0 30px 60px rgba(0, 0, 0, .3)';
-                ghostItem.style.transform = 'scale(1.05)';
-
-                item.style.opacity = '0.5';
-                item.style.cursor = 'grabbing';
-                document.body.style.cursor = 'grabbing';
-              }, 0);
-
-              document.body.appendChild(ghostItem);
-
-              const mouseMoveHandler = (moveEvent: MouseEvent) => {
-                // Ghost Drag
-                const deltaX = moveEvent.pageX - clickEvent.pageX;
-                const deltaY = moveEvent.pageY - clickEvent.pageY;
-
-                ghostItem.style.top = `${itemRect.top + deltaY}px`;
-                ghostItem.style.left = `${itemRect.left + deltaX}px`;
-
-                // Drop 영역 확인
-                const ghostItemRect = ghostItem.getBoundingClientRect();
-                const ghostCenterX = ghostItemRect.left + ghostItemRect.width / 2;
-                const ghostCenterY = ghostItemRect.top + ghostItemRect.height / 2;
-
-                const dropItem = document
-                  .elementFromPoint(ghostCenterX, ghostCenterY)
-                  ?.closest('.dnd-drop-area') as HTMLElement;
-
-                dropAreaList.forEach((area) => {
-                  area.classList.remove('active');
-                  area.removeAttribute('style');
-                });
-
-                if (dropItem) {
-                  dropItem.classList.add('active');
-                  dropItem.style.filter = 'drop-shadow(16px 16px 16px gray)';
-                }
-              };
-
-              const mouseUpHandler = (moveEvent: MouseEvent) => {
-                // 제자리 복귀
-                ghostItem.style.transition = 'all 200ms ease';
-                ghostItem.style.left = `${itemRect.left}px`;
-                ghostItem.style.top = `${itemRect.top}px`;
-                ghostItem.style.transform = 'none';
-
-                ghostItem.addEventListener(
-                  'transitionend',
-                  () => {
-                    item.removeAttribute('style');
-                    document.body.removeAttribute('style');
-                    ghostItem.remove();
-                  },
-                  { once: true },
-                );
-
-                document.removeEventListener('mousemove', mouseMoveHandler);
-              };
-
-              document.addEventListener('mousemove', mouseMoveHandler);
-              document.addEventListener('mouseup', mouseUpHandler, { once: true });
-            }}
-          />
+        {dragWords.map((value) => (
+          <DragAlphabet className="dnd-drag-item" key={value} value={value} />
         ))}
+      </div>
+
+      <div>
+        <div className="" onClick={() => setWords(getRandomWords(4))}>
+          RESET
+        </div>
       </div>
     </div>
   );
