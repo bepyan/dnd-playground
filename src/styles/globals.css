@@ -41,6 +41,10 @@ body {
   }
 }
 
+.text-shadow {
+  text-shadow: -1px 0 #ececec, 0 1px #ececec, 1px 0 #ececec, 0 -1px #ececec;
+}
+
 /* dnd styling */
 
 .dnd-item {
@@ -56,5 +60,5 @@ body {
 }
 
 .dnd-item.ghost {
-  @apply cursor-grabbing border-2 border-blue-400 pointer-events-none;
+  @apply pointer-events-none cursor-grabbing border-2 border-blue-400;
 }

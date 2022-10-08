@@ -20,18 +20,20 @@ export default function DNDMatchExample() {
     <div className="flex flex-col items-center gap-16">
       <div className="flex gap-8">
         {words.map((value, index) => (
-          <DropAlphabet key={value} value={value} />
+          <DropAlphabet className="dnd-drop-area" key={value} value={value} />
         ))}
       </div>
 
       <div className="flex gap-8">
         {dragWords.map((value, index) => (
           <DragAlphabet
+            className="dnd-drag-item"
             key={value}
             value={value}
             onMouseDown={(clickEvent: React.MouseEvent<Element, MouseEvent>) => {
               const item = clickEvent.currentTarget as HTMLElement;
               const itemRect = item.getBoundingClientRect();
+              const dropAreaList = document.querySelectorAll<HTMLElement>('.dnd-drop-area');
 
               // Ghost 만들기
               const ghostItem = item.cloneNode(true) as HTMLElement;
@@ -54,11 +56,31 @@ export default function DNDMatchExample() {
               document.body.appendChild(ghostItem);
 
               const mouseMoveHandler = (moveEvent: MouseEvent) => {
+                // Ghost Drag
                 const deltaX = moveEvent.pageX - clickEvent.pageX;
                 const deltaY = moveEvent.pageY - clickEvent.pageY;
 
                 ghostItem.style.top = `${itemRect.top + deltaY}px`;
                 ghostItem.style.left = `${itemRect.left + deltaX}px`;
+
+                // Drop 영역 확인
+                const ghostItemRect = ghostItem.getBoundingClientRect();
+                const ghostCenterX = ghostItemRect.left + ghostItemRect.width / 2;
+                const ghostCenterY = ghostItemRect.top + ghostItemRect.height / 2;
+
+                const dropItem = document
+                  .elementFromPoint(ghostCenterX, ghostCenterY)
+                  ?.closest('.dnd-drop-area') as HTMLElement;
+
+                dropAreaList.forEach((area) => {
+                  area.classList.remove('active');
+                  area.removeAttribute('style');
+                });
+
+                if (dropItem) {
+                  dropItem.classList.add('active');
+                  dropItem.style.filter = 'drop-shadow(16px 16px 16px gray)';
+                }
               };
 
               const mouseUpHandler = (moveEvent: MouseEvent) => {
