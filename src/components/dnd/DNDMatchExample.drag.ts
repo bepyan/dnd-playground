@@ -1,4 +1,6 @@
-export const registDND = () => {
+export const registDND = (
+  onDrop: (props: { source: string; destination: string; isCorrect: boolean }) => void,
+) => {
   const startEvent = (startEvent: MouseEvent) => {
     const item = startEvent.target as HTMLElement;
     if (
@@ -22,7 +24,7 @@ export const registDND = () => {
     ghostItem.style.pointerEvents = 'none';
 
     setTimeout(() => {
-      ghostItem.style.textShadow = '0 30px 60px rgba(0, 0, 0, .3)';
+      ghostItem.style.textShadow = '0 30px 60px rgba(0, 0, 0, .2)';
       ghostItem.style.transform = 'scale(1.05)';
 
       item.classList.add('placeholder');
@@ -99,10 +101,19 @@ export const registDND = () => {
                 },
                 { once: true },
               );
+            } else {
+              item.classList.add('opacity-50');
+              dropItem.classList.remove('text-white');
+              dropItem.classList.add('text-stone-700');
             }
           }
 
           ghostItem.remove();
+          onDrop({
+            source: item.innerText,
+            destination: dropItem?.innerText ?? '',
+            isCorrect,
+          });
         },
         { once: true },
       );

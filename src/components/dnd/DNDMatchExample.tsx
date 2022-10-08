@@ -1,3 +1,4 @@
+import { $ } from '@/utils';
 import { useEffect, useMemo, useState } from 'react';
 import { DragAlphabet, DropAlphabet } from './Alphabet';
 import { registDND } from './DNDMatchExample.drag';
@@ -10,7 +11,13 @@ const getRandomWords = (n: number) => {
 
 export default function DNDMatchExample() {
   const [words, setWords] = useState<string[]>(getRandomWords(4));
+  const [correctWords, setCorrectWords] = useState<string[]>([]);
   const dragWords = useMemo(() => [...words].sort(() => Math.random() - 0.5), [words]);
+
+  const reset = () => {
+    setWords(getRandomWords(4));
+    setCorrectWords([]);
+  };
 
   // CSR
   const [ready, setReady] = useState(false);
@@ -20,7 +27,11 @@ export default function DNDMatchExample() {
       return;
     }
 
-    const cleanup = registDND();
+    const cleanup = registDND(({ destination, isCorrect }) => {
+      if (isCorrect) {
+        setCorrectWords((list) => [...list, destination]);
+      }
+    });
     return () => cleanup();
   }, [ready]);
 
@@ -30,18 +41,18 @@ export default function DNDMatchExample() {
     <div className="flex flex-col items-center gap-16">
       <div className="flex gap-8">
         {words.map((value) => (
-          <DropAlphabet className="dnd-drop-area" key={value} value={value} />
+          <DropAlphabet isCorrect={correctWords.includes(value)} key={value} value={value} />
         ))}
       </div>
 
       <div className="flex gap-8">
         {dragWords.map((value) => (
-          <DragAlphabet className="dnd-drag-item" key={value} value={value} />
+          <DragAlphabet isCorrect={correctWords.includes(value)} key={value} value={value} />
         ))}
       </div>
 
       <div>
-        <div className="cursor-pointer" onClick={() => setWords(getRandomWords(4))}>
+        <div className="cursor-pointer" onClick={reset}>
           <svg
             fill="currentcolor"
             xmlns="http://www.w3.org/2000/svg"
