@@ -11,6 +11,8 @@ export default function registDragEvent(
         if (stopPropagation) touchEvent.stopPropagation();
 
         const touchMoveHandler = (moveEvent: TouchEvent) => {
+          if (moveEvent.cancelable) moveEvent.preventDefault();
+
           const deltaX = moveEvent.touches[0].screenX - touchEvent.touches[0].screenX;
           const deltaY = moveEvent.touches[0].screenY - touchEvent.touches[0].screenY;
           onDragChange(deltaX, deltaY);
@@ -20,7 +22,7 @@ export default function registDragEvent(
           document.removeEventListener('touchmove', touchMoveHandler);
         };
 
-        document.addEventListener('touchmove', touchMoveHandler);
+        document.addEventListener('touchmove', touchMoveHandler, { passive: false });
         document.addEventListener('touchend', touchEndHandler, { once: true });
       },
     };

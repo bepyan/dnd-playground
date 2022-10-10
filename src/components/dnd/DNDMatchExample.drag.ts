@@ -62,6 +62,8 @@ export const registDND = (
     // Ghost 만들기 END
 
     const moveHandler = (moveEvent: MouseEvent | TouchEvent) => {
+      if (moveEvent.cancelable) moveEvent.preventDefault();
+
       // Ghost Drag
       const { deltaX, deltaY } = getDelta(startEvent, moveEvent);
 
@@ -145,7 +147,7 @@ export const registDND = (
       document.removeEventListener(moveEventName, moveHandler);
     };
 
-    document.addEventListener(moveEventName, moveHandler);
+    document.addEventListener(moveEventName, moveHandler, { passive: false });
     document.addEventListener(endEventName, endHandler, { once: true });
   };
 
