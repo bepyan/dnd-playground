@@ -10,7 +10,7 @@ export const DropAlphabet = ({
       {...props}
       className={$(
         isCorrect ? 'text-stone-700' : 'dnd-drop-area text-white',
-        'text-shadow text-7xl font-black drop-shadow-xl ',
+        'text-shadow text-7xl font-black drop-shadow-xl will-change-[filter]',
         props.className,
       )}
     >
