@@ -38,7 +38,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
 
       <div className="mx-auto max-w-3xl pb-10">
-        <div className="flex items-center gap-4 p-4">
+        <div className="flex flex-wrap items-center gap-4 p-4">
           <ALink href="/" title="Drag" />
           <ALink href="/touch" title="Touch" />
           <ALink href="/resize" title="Resize" />
