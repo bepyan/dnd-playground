@@ -2,6 +2,7 @@
 import { inrange } from '@/utils';
 import registDragEvent from '@/utils/registDragEvent2';
 import { useState } from 'react';
+import useCarouselSize from './useCarouselSize';
 
 const imageList = [
   'https://blog.kakaocdn.net/dn/dpxiAT/btqUBv6Fvpn/E8xUMncq7AVuDeOim0LrMk/img.jpg',
@@ -11,13 +12,12 @@ const imageList = [
   'https://blog.kakaocdn.net/dn/bG3iVL/btqUvCZPaRL/ofIjkNWJP1mj2bOG9fie51/img.jpg',
 ];
 
-const SLIDER_WIDTH = 400;
-const SLIDER_HEIGHT = 400;
-
 export default function CarouselExample() {
   const [hide, setHide] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [transX, setTransX] = useState(0);
+
+  const { ref, width, height } = useCarouselSize();
 
   return (
     <>
@@ -36,21 +36,22 @@ export default function CarouselExample() {
       </div>
 
       <div
+        ref={ref}
+        className="w-full max-w-lg"
         style={{
-          width: SLIDER_WIDTH,
-          height: SLIDER_HEIGHT,
+          height,
           overflow: hide ? 'hidden' : 'visible',
         }}
       >
         <div
           className="flex"
           style={{
-            transform: `translateX(${-currentIndex * SLIDER_WIDTH + transX}px)`,
+            transform: `translateX(${-currentIndex * width + transX}px)`,
             transition: `transform ${transX ? 0 : 300}ms ease-in-out 0s`,
           }}
           {...registDragEvent({
             onDragChange: (deltaX) => {
-              setTransX(inrange(deltaX, -SLIDER_WIDTH, SLIDER_WIDTH));
+              setTransX(inrange(deltaX, -width, width));
             },
             onDragEnd: (deltaX) => {
               const maxIndex = imageList.length - 1;
@@ -64,7 +65,7 @@ export default function CarouselExample() {
         >
           {imageList.map((url, i) => (
             <div key={i} className="flex-shrink-0">
-              <img draggable={false} src={url} alt="img" width={SLIDER_WIDTH} />
+              <img draggable={false} src={url} alt="img" width={width} />
             </div>
           ))}
         </div>

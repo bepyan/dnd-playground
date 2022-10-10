@@ -1,7 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
 import { inrange } from '@/utils';
 import registDragEvent from '@/utils/registDragEvent2';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import useCarouselSize from './useCarouselSize';
 
 const imageList = [
   'https://blog.kakaocdn.net/dn/dpxiAT/btqUBv6Fvpn/E8xUMncq7AVuDeOim0LrMk/img.jpg',
@@ -11,8 +12,8 @@ const imageList = [
   'https://blog.kakaocdn.net/dn/bG3iVL/btqUvCZPaRL/ofIjkNWJP1mj2bOG9fie51/img.jpg',
 ];
 
-const SLIDER_WIDTH = 400;
-const SLIDER_HEIGHT = 400;
+// width 1일 떄 height의 비율
+const ASPECT_RADIO = 1;
 
 export default function CarouselInfiniteExample() {
   const [hide, setHide] = useState(true);
@@ -21,6 +22,8 @@ export default function CarouselInfiniteExample() {
   const [animate, setAnimate] = useState(false);
 
   const slideList = [imageList.at(-1), ...imageList, imageList.at(0)];
+
+  const { ref: carouselRef, width, height } = useCarouselSize();
 
   return (
     <>
@@ -39,21 +42,22 @@ export default function CarouselInfiniteExample() {
       </div>
 
       <div
+        ref={carouselRef}
+        className="flex w-full max-w-lg"
         style={{
-          width: SLIDER_WIDTH,
-          height: SLIDER_HEIGHT,
+          height,
           overflow: hide ? 'hidden' : 'visible',
         }}
       >
         <div
           className="flex"
           style={{
-            transform: `translateX(${-currentIndex * SLIDER_WIDTH + transX}px)`,
+            transform: `translateX(${-currentIndex * width + transX}px)`,
             transition: `transform ${animate ? 300 : 0}ms ease-in-out 0s`,
           }}
           {...registDragEvent({
             onDragChange: (deltaX) => {
-              setTransX(inrange(deltaX, -SLIDER_WIDTH + 10, SLIDER_WIDTH - 10));
+              setTransX(inrange(deltaX, -width + 10, width - 10));
             },
             onDragEnd: (deltaX) => {
               const maxIndex = slideList.length - 1;
@@ -77,7 +81,7 @@ export default function CarouselInfiniteExample() {
         >
           {slideList.map((url, i) => (
             <div key={i} className="flex-shrink-0">
-              <img draggable={false} src={url} alt="img" width={SLIDER_WIDTH} />
+              <img draggable={false} src={url} alt="img" width={width} />
             </div>
           ))}
         </div>
