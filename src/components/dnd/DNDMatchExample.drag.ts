@@ -48,18 +48,15 @@ export const registDND = (
     ghostItem.style.position = 'fixed';
     ghostItem.style.top = `${itemRect.top}px`;
     ghostItem.style.left = `${itemRect.left}px`;
-    ghostItem.style.transition = 'transform 200ms ease';
     ghostItem.style.pointerEvents = 'none';
+    ghostItem.style.textShadow = '0 30px 60px rgba(0, 0, 0, .2)';
+    ghostItem.style.transform = 'scale(1.05)';
+    ghostItem.style.transition = 'transform 200ms ease';
 
-    setTimeout(() => {
-      ghostItem.style.textShadow = '0 30px 60px rgba(0, 0, 0, .2)';
-      ghostItem.style.transform = 'scale(1.05)';
-
-      item.classList.add('placeholder');
-      item.style.opacity = '0.5';
-      item.style.cursor = 'grabbing';
-      document.body.style.cursor = 'grabbing';
-    }, 0);
+    item.classList.add('placeholder');
+    item.style.opacity = '0.5';
+    item.style.cursor = 'grabbing';
+    document.body.style.cursor = 'grabbing';
 
     document.body.appendChild(ghostItem);
     // Ghost 만들기 END
