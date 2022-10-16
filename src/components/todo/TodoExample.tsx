@@ -1,4 +1,4 @@
-import { TItems, TItemType } from '@/pages/todo';
+import { TItems, TItemStatus } from '@/pages/todo';
 import { Dispatch, SetStateAction, useEffect } from 'react';
 import registDND from './TodoExample.drag';
 
@@ -13,8 +13,8 @@ export default function TodoExample({
     const clear = registDND(({ source, destination }) => {
       if (!destination) return;
 
-      const scourceKey = source.droppableId as TItemType;
-      const destinationKey = destination.droppableId as TItemType;
+      const scourceKey = source.droppableId as TItemStatus;
+      const destinationKey = destination.droppableId as TItemStatus;
 
       setItems((items) => {
         const _items = JSON.parse(JSON.stringify(items)) as typeof items;
@@ -42,7 +42,7 @@ export default function TodoExample({
               className="flex flex-col gap-3 rounded-xl bg-gray-200 p-4 ring-1 ring-gray-300 dark:bg-[#000000]"
             >
               <span className="text-xs font-semibold">{key.toLocaleUpperCase()}</span>
-              {items[key as TItemType].map((item, index) => (
+              {items[key as TItemStatus].map((item, index) => (
                 <div
                   key={item.id}
                   data-index={index}

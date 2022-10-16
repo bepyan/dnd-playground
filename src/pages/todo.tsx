@@ -2,16 +2,17 @@ import TodoExample from '@/components/todo/TodoExample';
 import TodoLibraryExample from '@/components/todo/TodoLibraryExample';
 import { useState } from 'react';
 
-export type TItemType = 'todo' | 'doing';
+export type TItemStatus = 'todo' | 'doing';
 
 export type TItem = {
   id: string;
-  type: TItemType;
+  status: TItemStatus;
   title: string;
+  index: number;
 };
 
 export type TItems = {
-  [key in TItemType]: TItem[];
+  [key in TItemStatus]: TItem[];
 };
 
 export default function TodoPage() {
@@ -19,7 +20,8 @@ export default function TodoPage() {
     todo: [...Array(5)].map((_, i) => ({
       id: `${i}${i}${i}`,
       title: `Title ${i + 1}000`,
-      type: 'todo',
+      status: 'todo',
+      index: i,
     })),
     doing: [],
   });

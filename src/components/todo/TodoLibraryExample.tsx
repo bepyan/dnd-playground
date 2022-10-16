@@ -1,4 +1,4 @@
-import { TItems, TItemType } from '@/pages/todo';
+import { TItems, TItemStatus } from '@/pages/todo';
 import { $ } from '@/utils';
 import { useEffect, useState } from 'react';
 import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
@@ -13,8 +13,8 @@ export default function TodoLibraryExample({
   const onDragEnd = ({ source, destination }: DropResult) => {
     if (!destination) return;
 
-    const scourceKey = source.droppableId as TItemType;
-    const destinationKey = destination.droppableId as TItemType;
+    const scourceKey = source.droppableId as TItemStatus;
+    const destinationKey = destination.droppableId as TItemStatus;
 
     const _items = JSON.parse(JSON.stringify(items)) as typeof items;
     const [targetItem] = _items[scourceKey].splice(source.index, 1);
@@ -59,7 +59,7 @@ export default function TodoLibraryExample({
                     )}
                   >
                     <span className="text-xs font-semibold">{key.toLocaleUpperCase()}</span>
-                    {items[key as TItemType].map((item, index) => (
+                    {items[key as TItemStatus].map((item, index) => (
                       <Draggable key={item.id} draggableId={item.id} index={index}>
                         {(provided, snapshot) => (
                           <div
