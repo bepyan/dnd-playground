@@ -124,18 +124,18 @@ body {
 
 /* dnd styling */
 
-.dnd-item {
+.todo .dnd-item {
   @apply border border-transparent transition-shadow;
 }
 
-.dnd-item.placeholder {
+.todo .dnd-item.placeholder {
   @apply border border-blue-500 opacity-50 ring-2 ring-blue-400;
 }
 
-.dnd-item:not(.ghost) {
+.todo .dnd-item:not(.ghost) {
   @apply cursor-grab shadow;
 }
 
-.dnd-item.ghost {
+.todo .dnd-item.ghost {
   @apply pointer-events-none cursor-grabbing border-2 border-blue-400;
 }

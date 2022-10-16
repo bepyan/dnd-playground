@@ -10,8 +10,7 @@ export default function TodoLibraryExample({
   items: TItems;
   setItems: (items: TItems) => void;
 }) {
-  const onDragEnd = (result: DropResult) => {
-    const { source, destination } = result;
+  const onDragEnd = ({ source, destination }: DropResult) => {
     if (!destination) return;
 
     const scourceKey = source.droppableId as TItemType;

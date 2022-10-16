@@ -27,7 +27,7 @@ export default function TodoPage() {
   return (
     <>
       <TodoLibraryExample items={items} setItems={setItems} />
-      <TodoExample items={items} setItems={setItems} />
+      {/* <TodoExample items={items} setItems={setItems} /> */}
     </>
   );
 }
