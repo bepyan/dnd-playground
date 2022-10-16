@@ -37,18 +37,26 @@ export type DropEvent = {
 
 export default function registDND(onDrop: (event: DropEvent) => void) {
   const startHandler = (startEvent: MouseEvent | TouchEvent) => {
-    const item = startEvent.target as HTMLElement;
+    const item = (startEvent.target as HTMLElement).closest<HTMLElement>('.dnd-item');
 
-    if (
-      !item.classList.contains('dnd-item')
-      // item.classList.contains('ghost') ||
-      // item.classList.contains('placeholder')
-    ) {
+    if (!item || item.classList.contains('moving')) {
       return;
     }
 
     const itemRect = item.getBoundingClientRect();
-    const itemOriginIndex = Number(item.dataset.index);
+
+    let destination: HTMLElement | null | undefined;
+    let destinationItem: HTMLElement | null | undefined;
+    let destinationIndex: number;
+    let destinationDroppableId: string;
+
+    const source = item.closest<HTMLElement>('[data-droppable-id]');
+
+    if (!source) return console.warn('Need `data-droppable-id` at dnd-item parent');
+    if (!item.dataset.index) return console.warn('Need `data-index` at dnd-item');
+
+    const sourceIndex = Number(item.dataset.index);
+    const sourceDroppableId = source.dataset.droppableId!;
 
     //--- Ghost 만들기
     const ghostItem = item.cloneNode(true) as HTMLElement;
@@ -73,7 +81,7 @@ export default function registDND(onDrop: (event: DropEvent) => void) {
     //--- Ghost 만들기 END
 
     const moveHandler = (moveEvent: MouseEvent | TouchEvent) => {
-      // if (moveEvent.cancelable) moveEvent.preventDefault();
+      if (moveEvent.cancelable) moveEvent.preventDefault();
 
       //--- Ghost Drag
       const { deltaX, deltaY } = getDelta(startEvent, moveEvent);
@@ -81,60 +89,73 @@ export default function registDND(onDrop: (event: DropEvent) => void) {
       ghostItem.style.left = `${itemRect.left + deltaX}px`;
       //--- Ghost Drag END
 
-      // if() return;
-
+      //
       //--- Drop 영역 확인
       const ghostItemRect = ghostItem.getBoundingClientRect();
-      const ghostCenterX = ghostItemRect.left + ghostItemRect.width / 2;
-      const ghostCenterY = ghostItemRect.top + ghostItemRect.height / 2;
 
-      const dropItem = document
-        .elementFromPoint(ghostCenterX, ghostCenterY)
+      const targetItem = document
+        .elementFromPoint(
+          ghostItemRect.left + ghostItemRect.width / 2,
+          ghostItemRect.top + ghostItemRect.height / 2,
+        )
         ?.closest<HTMLElement>('.dnd-item');
 
-      if (!dropItem || dropItem.isSameNode(item)) return;
+      if (!targetItem || targetItem.isSameNode(item) || item.classList.contains('moving')) {
+        return;
+      }
 
       document.querySelectorAll<HTMLElement>('.dnd-item:not(.ghost)').forEach((item) => {
         item.style.transition = 'all 200ms ease';
       });
 
-      // 같은 보드에 있다면
-      const targetIndex = Number(dropItem.dataset.index);
-      const itemIndex = Number(item.dataset.index);
+      destinationItem = targetItem;
+      destination = destinationItem.closest<HTMLElement>('[data-droppable-id]');
+      if (!destination) return console.warn('Need `data-droppable-id` at dnd-item parent');
+
+      destinationIndex = Number(destinationItem.dataset.index);
+      destinationDroppableId = destination.dataset.droppableId + '';
+
+      if (destinationDroppableId !== sourceDroppableId) {
+        console.log('on orther board');
+      }
+
       const ITEM_MARGIN = 12;
       const distance = itemRect.height + ITEM_MARGIN;
-      item.style.transform = `translate3d(0, ${targetIndex - itemIndex * distance}px, 0)`;
+      const transX = (destinationIndex - sourceIndex) * distance;
+      item.style.transform = `translate3d(0, ${transX}px, 0)`;
 
-      console.log('item', itemIndex, targetIndex);
+      item.classList.add('moving');
+      item.addEventListener(
+        'transitionend',
+        () => {
+          item.classList.remove('moving');
+        },
+        { once: true },
+      );
 
       // 위에서 아래로 간다면
-      if (itemIndex < targetIndex) {
-        let upTarget = dropItem;
+      if (sourceIndex < destinationIndex) {
+        let upTarget = destinationItem;
         while (
           upTarget &&
           upTarget.classList.contains('dnd-item') &&
           !upTarget.classList.contains('placeholder')
         ) {
-          upTarget.dataset.index = Number(upTarget.dataset.index) - 1 + '';
           upTarget.style.transform = `translate3d(0, ${-distance}px, 0)`;
           upTarget = upTarget.previousElementSibling as HTMLElement;
         }
       } else {
-        // let downTarget = dropItem;
-        // while (
-        //   downTarget &&
-        //   downTarget.classList.contains('dnd-item') &&
-        //   !downTarget.classList.contains('placeholder')
-        // ) {
-        //   downTarget.dataset.index = itemIndex + 1 + '';
-        //   downTarget.style.transform = `translate3d(0, ${-distance}px, 0)`;
-        //   downTarget = downTarget.nextElementSibling as HTMLElement;
-        // }
+        let downTarget = destinationItem;
+        while (
+          downTarget &&
+          downTarget.classList.contains('dnd-item') &&
+          !downTarget.classList.contains('placeholder')
+        ) {
+          downTarget.style.transform = `translate3d(0, ${distance}px, 0)`;
+          downTarget = downTarget.nextElementSibling as HTMLElement;
+        }
       }
-
-      // item.dataset.index = targetIndex + '';
-
-      //--- Drop 영역 END
+      //--- Drop 영역 확인 END
     };
 
     const endHandler = () => {
@@ -149,27 +170,36 @@ export default function registDND(onDrop: (event: DropEvent) => void) {
 
       document.body.removeAttribute('style');
       item.classList.remove('placeholder');
+      item.classList.add('moving');
 
       ghostItem.addEventListener(
         'transitionend',
         () => {
-          document.querySelectorAll('.dnd-item').forEach((item) => {
+          document.querySelectorAll<HTMLElement>('.dnd-item').forEach((item) => {
             item.removeAttribute('style');
           });
+
+          item.classList.remove('moving');
+
+          if (destination && destinationItem) {
+            destination.insertBefore(item, destinationItem);
+          }
 
           ghostItem.remove();
           // Ghost 제자리 복귀 END
 
-          // onDrop({
-          //   source: {
-          //     droppableId: 'todo',
-          //     index: itemIndex,
-          //   },
-          //   destination: {
-          //     droppableId: 'todo',
-          //     index: 1,
-          //   },
-          // });
+          onDrop({
+            source: {
+              droppableId: sourceDroppableId,
+              index: sourceIndex,
+            },
+            destination: destination
+              ? {
+                  droppableId: destinationDroppableId,
+                  index: destinationIndex,
+                }
+              : undefined,
+          });
         },
         { once: true },
       );
