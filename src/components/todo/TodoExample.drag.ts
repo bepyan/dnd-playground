@@ -80,8 +80,6 @@ export default function registDND(onDrop: (event: DropEvent) => void) {
     document.body.appendChild(ghostItem);
     //--- Ghost 만들기 END
 
-    let isForward = false;
-
     const moveHandler = (moveEvent: MouseEvent | TouchEvent) => {
       if (moveEvent.cancelable) moveEvent.preventDefault();
 
@@ -102,40 +100,56 @@ export default function registDND(onDrop: (event: DropEvent) => void) {
         )
         ?.closest<HTMLElement>('.dnd-item');
 
-      if (!targetItem || targetItem.isSameNode(item)) {
+      if (!targetItem || targetItem.isSameNode(item) || targetItem.classList.contains('moving')) {
         return;
       }
 
+      document.querySelectorAll<HTMLElement>('.dnd-item:not(.ghost)').forEach((item) => {
+        item.style.transition = 'all 200ms ease';
+      });
+
       destinationItem = targetItem;
-      destination = destinationItem.closest<HTMLElement>('[data-droppable-id]');
+      destination = targetItem.closest<HTMLElement>('[data-droppable-id]');
       if (!destination) return console.warn('Need `data-droppable-id` at dnd-item parent');
 
-      destinationIndex = Number(destinationItem.dataset.index);
+      let targetIndex = Number(targetItem.dataset.index);
+      destinationIndex = targetIndex;
       destinationDroppableId = destination.dataset.droppableId + '';
 
       if (destinationDroppableId !== sourceDroppableId) {
         console.log('🏄🏻‍♂️ on orther board');
       }
 
-      console.log(`source: ${sourceIndex}, desination: ${destinationIndex}`);
+      console.log(`source: ${sourceIndex}, desination: ${targetIndex}`);
 
       const ITEM_MARGIN = 12;
       const distance = itemRect.height + ITEM_MARGIN;
       const isDestinationMoved = destinationItem.classList.contains('moved');
 
-      let indexDiff = destinationIndex - sourceIndex;
-
+      let indexDiff = targetIndex - sourceIndex;
       if (isDestinationMoved) {
-        indexDiff += destinationIndex > sourceIndex ? -1 : 1;
+        destinationIndex += targetIndex > sourceIndex ? -1 : 1;
+        indexDiff += targetIndex > sourceIndex ? -1 : 1;
       }
-
       const transX = indexDiff * distance;
       item.style.transform = `translate3d(0, ${transX}px, 0)`;
 
-      // 위에서 아래로 간다면 (ex. index 1 -> 3)
-      isForward = sourceIndex < destinationIndex;
+      targetItem.classList.add('moving');
+      targetItem.addEventListener(
+        'transitionend',
+        () => {
+          targetItem?.classList.remove('moving');
+        },
+        { once: true },
+      );
+      setTimeout(() => {
+        targetItem?.classList.remove('moving');
+      }, 200);
 
-      let target = destinationItem;
+      // 위에서 아래로 간다면 (ex. index 1 -> 3)
+      const isForward = sourceIndex < targetIndex;
+
+      let target = targetItem;
       while (
         target &&
         target.classList.contains('dnd-item') &&
@@ -179,10 +193,14 @@ export default function registDND(onDrop: (event: DropEvent) => void) {
             item.classList.remove('moving', 'moved');
           });
 
+          console.log(`${sourceIndex} -> ${destinationIndex}`);
+
           if (destination && destinationItem) {
             destination.insertBefore(
               item,
-              isForward ? destinationItem.nextElementSibling : destinationItem,
+              sourceIndex >= destinationIndex
+                ? destinationItem
+                : destinationItem.nextElementSibling,
             );
           }
 
