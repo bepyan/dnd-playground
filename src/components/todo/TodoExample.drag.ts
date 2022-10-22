@@ -80,6 +80,8 @@ export default function registDND(onDrop: (event: DropEvent) => void) {
     document.body.appendChild(ghostItem);
     //--- Ghost 만들기 END
 
+    let isForward = false;
+
     const moveHandler = (moveEvent: MouseEvent | TouchEvent) => {
       if (moveEvent.cancelable) moveEvent.preventDefault();
 
@@ -100,13 +102,9 @@ export default function registDND(onDrop: (event: DropEvent) => void) {
         )
         ?.closest<HTMLElement>('.dnd-item');
 
-      if (!targetItem || targetItem.isSameNode(item) || item.classList.contains('moving')) {
+      if (!targetItem || targetItem.isSameNode(item)) {
         return;
       }
-
-      document.querySelectorAll<HTMLElement>('.dnd-item:not(.ghost)').forEach((item) => {
-        item.style.transition = 'all 200ms ease';
-      });
 
       destinationItem = targetItem;
       destination = destinationItem.closest<HTMLElement>('[data-droppable-id]');
@@ -116,57 +114,58 @@ export default function registDND(onDrop: (event: DropEvent) => void) {
       destinationDroppableId = destination.dataset.droppableId + '';
 
       if (destinationDroppableId !== sourceDroppableId) {
-        console.log('on orther board');
+        console.log('🏄🏻‍♂️ on orther board');
       }
+
+      console.log(`source: ${sourceIndex}, desination: ${destinationIndex}`);
 
       const ITEM_MARGIN = 12;
       const distance = itemRect.height + ITEM_MARGIN;
-      const transX = (destinationIndex - sourceIndex) * distance;
+      const isDestinationMoved = destinationItem.classList.contains('moved');
+
+      let indexDiff = destinationIndex - sourceIndex;
+
+      if (isDestinationMoved) {
+        indexDiff += destinationIndex > sourceIndex ? -1 : 1;
+      }
+
+      const transX = indexDiff * distance;
       item.style.transform = `translate3d(0, ${transX}px, 0)`;
 
-      item.classList.add('moving');
-      item.addEventListener(
-        'transitionend',
-        () => {
-          item.classList.remove('moving');
-        },
-        { once: true },
-      );
+      // 위에서 아래로 간다면 (ex. index 1 -> 3)
+      isForward = sourceIndex < destinationIndex;
 
-      // 위에서 아래로 간다면
-      if (sourceIndex < destinationIndex) {
-        let upTarget = destinationItem;
-        while (
-          upTarget &&
-          upTarget.classList.contains('dnd-item') &&
-          !upTarget.classList.contains('placeholder')
-        ) {
-          upTarget.style.transform = `translate3d(0, ${-distance}px, 0)`;
-          upTarget = upTarget.previousElementSibling as HTMLElement;
-        }
-      } else {
-        let downTarget = destinationItem;
-        while (
-          downTarget &&
-          downTarget.classList.contains('dnd-item') &&
-          !downTarget.classList.contains('placeholder')
-        ) {
-          downTarget.style.transform = `translate3d(0, ${distance}px, 0)`;
-          downTarget = downTarget.nextElementSibling as HTMLElement;
+      let target = destinationItem;
+      while (
+        target &&
+        target.classList.contains('dnd-item') &&
+        !target.classList.contains('placeholder')
+      ) {
+        if (isDestinationMoved) {
+          target.style.transform = '';
+          target.classList.remove('moved');
+          target = (
+            isForward ? target.nextElementSibling : target.previousElementSibling
+          ) as HTMLElement;
+        } else {
+          target.style.transform = `translate3d(0, ${isForward ? -distance : distance}px, 0)`;
+          target.classList.add('moved');
+          target = (
+            isForward ? target.previousElementSibling : target.nextElementSibling
+          ) as HTMLElement;
         }
       }
       //--- Drop 영역 확인 END
     };
 
     const endHandler = () => {
-      // Ghost 제자리 복귀
       const itemRect = item.getBoundingClientRect();
       ghostItem.style.left = `${itemRect.left}px`;
       ghostItem.style.top = `${itemRect.top}px`;
       ghostItem.style.opacity = '1';
       ghostItem.style.transform = 'none';
       ghostItem.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.15)';
-      ghostItem.style.transition = 'all 200ms ease';
+      ghostItem.style.transition = 'all 100ms ease';
 
       document.body.removeAttribute('style');
       item.classList.remove('placeholder');
@@ -177,16 +176,17 @@ export default function registDND(onDrop: (event: DropEvent) => void) {
         () => {
           document.querySelectorAll<HTMLElement>('.dnd-item').forEach((item) => {
             item.removeAttribute('style');
+            item.classList.remove('moving', 'moved');
           });
 
-          item.classList.remove('moving');
-
           if (destination && destinationItem) {
-            destination.insertBefore(item, destinationItem);
+            destination.insertBefore(
+              item,
+              isForward ? destinationItem.nextElementSibling : destinationItem,
+            );
           }
 
           ghostItem.remove();
-          // Ghost 제자리 복귀 END
 
           onDrop({
             source: {

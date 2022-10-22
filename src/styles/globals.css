@@ -125,7 +125,7 @@ body {
 /* dnd styling */
 
 .todo .dnd-item {
-  @apply border border-transparent transition-shadow;
+  @apply border border-transparent;
 }
 
 .todo .dnd-item.placeholder {
