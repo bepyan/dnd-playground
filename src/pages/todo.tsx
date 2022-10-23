@@ -28,8 +28,12 @@ export default function TodoPage() {
 
   return (
     <>
-      <TodoLibraryExample items={items} setItems={setItems} />
-      <TodoExample items={items} setItems={setItems} />
+      <div className="min-h-[700px]">
+        <TodoLibraryExample items={items} setItems={setItems} />
+      </div>
+      <div className="min-h-[700px]">
+        <TodoExample items={items} setItems={setItems} />
+      </div>
     </>
   );
 }
