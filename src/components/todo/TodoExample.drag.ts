@@ -69,6 +69,7 @@ export default function registDND(onDrop: (event: DropEvent) => void) {
     ghostItem.style.height = `${itemRect.height}px`;
     ghostItem.style.pointerEvents = 'none';
 
+    ghostItem.style.border = '2px solid rgb(96 165 250)';
     ghostItem.style.opacity = '0.95';
     ghostItem.style.boxShadow = '0 30px 60px rgba(0, 0, 0, .2)';
     ghostItem.style.transform = 'scale(1.05)';
@@ -214,6 +215,7 @@ export default function registDND(onDrop: (event: DropEvent) => void) {
     const endHandler = () => {
       const sourceItem = movingItem ?? item;
       item.classList.remove('placeholder');
+      movingItem?.classList.remove('placeholder');
 
       document.body.removeAttribute('style');
 
@@ -222,6 +224,7 @@ export default function registDND(onDrop: (event: DropEvent) => void) {
       ghostItem.style.top = `${itemRect.top}px`;
       ghostItem.style.opacity = '1';
       ghostItem.style.transform = 'none';
+      ghostItem.style.borderWidth = '0px';
       ghostItem.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.15)';
       ghostItem.style.transition = 'all 200ms ease';
 

@@ -136,6 +136,6 @@ body {
   @apply cursor-grab shadow;
 }
 
-.todo .dnd-item.ghost {
+/* .dnd-item.ghost {
   @apply pointer-events-none cursor-grabbing border-2 border-blue-400;
-}
+} */
