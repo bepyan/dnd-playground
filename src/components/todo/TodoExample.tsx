@@ -39,7 +39,7 @@ export default function TodoExample({
             <div
               key={key}
               data-droppable-id={key}
-              className="flex flex-col gap-3 rounded-xl bg-gray-200 p-4 ring-1 ring-gray-300 dark:bg-[#000000]"
+              className="flex flex-col gap-3 rounded-xl bg-gray-200 p-4 ring-1 ring-gray-300 transition-shadow dark:bg-[#000000]"
             >
               <span className="text-xs font-semibold">{key.toLocaleUpperCase()}</span>
               {items[key as TItemStatus].map((item, index) => (

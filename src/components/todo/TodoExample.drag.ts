@@ -36,6 +36,12 @@ export type DropEvent = {
 };
 
 export default function registDND(onDrop: (event: DropEvent) => void) {
+  const clearDroppableShadow = () => {
+    document.querySelectorAll<HTMLElement>('[data-droppable-id]').forEach((element) => {
+      element.style.boxShadow = 'none';
+    });
+  };
+
   const startHandler = (startEvent: MouseEvent | TouchEvent) => {
     const item = (startEvent.target as HTMLElement).closest<HTMLElement>('.dnd-item');
 
@@ -108,6 +114,11 @@ export default function registDND(onDrop: (event: DropEvent) => void) {
       const currentDestination = pointTarget?.closest<HTMLElement>('[data-droppable-id]');
       const currentDestinationDroppableId = currentDestination?.dataset.droppableId;
       const currentDestinationIndex = Number(currentDestinationItem?.dataset.index);
+
+      clearDroppableShadow();
+      if (currentDestination) {
+        currentDestination.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3)';
+      }
 
       const currentSourceItem = movingItem ?? item;
       const currentSourceIndex = Number(currentSourceItem.dataset.index);
@@ -218,6 +229,7 @@ export default function registDND(onDrop: (event: DropEvent) => void) {
       movingItem?.classList.remove('placeholder');
 
       document.body.removeAttribute('style');
+      clearDroppableShadow();
 
       const itemRect = sourceItem.getBoundingClientRect();
       ghostItem.style.left = `${itemRect.left}px`;
