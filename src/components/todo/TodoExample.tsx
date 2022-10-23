@@ -30,7 +30,7 @@ export default function TodoExample({
     <div className="p-4">
       <div className="mb-2">
         <h1 className="text-3xl font-bold">Drag and Drop</h1>
-        <span>with Todo</span>
+        <span>React with VanillaTS (might have a little bug...)</span>
       </div>
 
       <div className="mt-4 flex">
