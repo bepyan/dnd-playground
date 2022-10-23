@@ -103,13 +103,20 @@ export default function registDND(onDrop: (event: DropEvent) => void) {
         ghostItemRect.top + ghostItemRect.height / 2,
       );
 
-      const targetItem = pointTarget?.closest<HTMLElement>('.dnd-item');
+      const currentDestinationItem = pointTarget?.closest<HTMLElement>('.dnd-item');
       const currentDestination = pointTarget?.closest<HTMLElement>('[data-droppable-id]');
       const currentDestinationDroppableId = currentDestination?.dataset.droppableId;
-      const currentSource = (movingItem ?? item).closest<HTMLElement>('[data-droppable-id]')!;
+      const currentDestinationIndex = Number(currentDestinationItem?.dataset.index);
+
+      const currentSourceItem = movingItem ?? item;
+      const currentSourceIndex = Number(currentSourceItem.dataset.index);
+      const currentSource = currentSourceItem.closest<HTMLElement>('[data-droppable-id]')!;
       const currentSourceDroppableId = currentSource.dataset.droppableId;
 
-      if (targetItem?.isSameNode(item) || targetItem?.classList.contains('moving')) {
+      if (
+        currentDestinationItem?.isSameNode(currentSourceItem) ||
+        currentDestinationItem?.classList.contains('moving')
+      ) {
         return;
       }
 
@@ -130,63 +137,58 @@ export default function registDND(onDrop: (event: DropEvent) => void) {
         destinationDroppableId = currentDestinationDroppableId;
         destinationIndex = currentDestination.querySelectorAll('.dnd-item').length - 1;
 
-        currentDestination.querySelectorAll('.dnd-item').forEach((v, i) => {
-          const item = v as HTMLElement;
-          item.dataset.index = i + '';
-          item.style.transform = '';
-          item.classList.remove('moved');
+        currentDestination.querySelectorAll<HTMLElement>('.dnd-item').forEach((v, i) => {
+          v.dataset.index = i + '';
+          v.style.transform = '';
+          v.classList.remove('moved');
         });
-        currentSource.querySelectorAll('.dnd-item').forEach((v, i) => {
-          const item = v as HTMLElement;
-          item.dataset.index = i + '';
-          item.style.transform = '';
-          item.classList.remove('moved');
+        currentSource.querySelectorAll<HTMLElement>('.dnd-item').forEach((v, i) => {
+          v.dataset.index = i + '';
+          v.style.transform = '';
+          v.classList.remove('moved');
         });
-        return;
       }
 
-      if (!targetItem) {
+      console.log(
+        `'${currentSourceDroppableId}': ${currentSourceIndex} -> '${currentDestinationDroppableId}': ${currentDestinationIndex}`,
+      );
+
+      if (!currentDestinationItem) {
         return;
       }
 
       const ITEM_MARGIN = 12;
       const distance = itemRect.height + ITEM_MARGIN;
 
-      destinationItem = targetItem;
+      destinationItem = currentDestinationItem;
       const isDestinationMoved = destinationItem.classList.contains('moved');
-      destination = targetItem.closest<HTMLElement>('[data-droppable-id]');
+      destination = currentDestinationItem.closest<HTMLElement>('[data-droppable-id]');
       destinationDroppableId = destination?.dataset.droppableId + '';
 
-      let targetIndex = Number(targetItem.dataset.index);
-      let indexDiff = targetIndex - sourceIndex;
+      // 위에서 아래로 간다면 (ex. index 1 -> 3)
+      const isForward = currentSourceIndex < currentDestinationIndex;
+      let indexDiff = currentDestinationIndex - currentSourceIndex;
       if (isDestinationMoved) {
-        indexDiff += targetIndex > sourceIndex ? -1 : 1;
+        indexDiff += isForward ? -1 : 1;
       }
-      destinationIndex = sourceIndex + indexDiff;
-
-      console.log(
-        `'${currentSourceDroppableId}': ${sourceIndex} -> '${destinationDroppableId}': ${destinationIndex}`,
-      );
+      destinationIndex = currentSourceIndex + indexDiff;
 
       const transX = indexDiff * distance;
-      item.style.transform = `translate3d(0, ${transX}px, 0)`;
+      currentSourceItem.style.transform = `translate3d(0, ${transX}px, 0)`;
 
-      targetItem.classList.add('moving');
-      targetItem.addEventListener(
+      currentDestinationItem.classList.add('moving');
+      currentDestinationItem.addEventListener(
         'transitionend',
         () => {
-          targetItem?.classList.remove('moving');
+          currentDestinationItem?.classList.remove('moving');
         },
         { once: true },
       );
       setTimeout(() => {
-        targetItem?.classList.remove('moving');
+        currentDestinationItem?.classList.remove('moving');
       }, 200);
 
-      // 위에서 아래로 간다면 (ex. index 1 -> 3)
-      const isForward = sourceIndex < targetIndex;
-
-      let target = targetItem;
+      let target = currentDestinationItem;
       while (
         target &&
         target.classList.contains('dnd-item') &&
@@ -211,17 +213,17 @@ export default function registDND(onDrop: (event: DropEvent) => void) {
 
     const endHandler = () => {
       const sourceItem = movingItem ?? item;
+      item.classList.remove('placeholder');
+
+      document.body.removeAttribute('style');
+
       const itemRect = sourceItem.getBoundingClientRect();
       ghostItem.style.left = `${itemRect.left}px`;
       ghostItem.style.top = `${itemRect.top}px`;
       ghostItem.style.opacity = '1';
       ghostItem.style.transform = 'none';
       ghostItem.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.15)';
-      ghostItem.style.transition = 'all 100ms ease';
-
-      document.body.removeAttribute('style');
-      sourceItem.classList.remove('placeholder');
-      sourceItem.classList.add('moving');
+      ghostItem.style.transition = 'all 200ms ease';
 
       ghostItem.addEventListener(
         'transitionend',
@@ -231,21 +233,18 @@ export default function registDND(onDrop: (event: DropEvent) => void) {
             item.classList.remove('moving', 'moved');
           });
 
+          // 💥 react rerender 이후로 실행되는 꼼수
+          setTimeout(() => {
+            item.classList.add('dnd-item');
+            item.removeAttribute('style');
+            movingItem?.remove();
+          }, 0);
+
+          ghostItem.remove();
+
           console.log(
             `result >> '${sourceDroppableId}': ${sourceIndex} -> '${destinationDroppableId}': ${destinationIndex}`,
           );
-
-          // if (destination && destinationItem) {
-          //   destination.insertBefore(
-          //     sourceItem,
-          //     sourceIndex >= destinationIndex
-          //       ? destinationItem
-          //       : destinationItem.nextElementSibling,
-          //   );
-          // }
-
-          movingItem?.remove();
-          ghostItem.remove();
 
           onDrop({
             source: {
