@@ -49,21 +49,20 @@ export default function registDND(onDrop: (event: DropEvent) => void) {
       return;
     }
 
-    const itemRect = item.getBoundingClientRect();
-
     let destination: HTMLElement | null | undefined;
     let destinationItem: HTMLElement | null | undefined;
     let destinationIndex: number;
     let destinationDroppableId: string;
 
     const source = item.closest<HTMLElement>('[data-droppable-id]');
-
     if (!source) return console.warn('Need `data-droppable-id` at dnd-item parent');
     if (!item.dataset.index) return console.warn('Need `data-index` at dnd-item');
-
+    // 다른 보드로 이동시 생성하는 임시 sourceItem
     let movingItem: HTMLElement;
     const sourceIndex = Number(item.dataset.index);
     const sourceDroppableId = source.dataset.droppableId!;
+
+    const itemRect = item.getBoundingClientRect();
 
     //--- Ghost 만들기
     const ghostItem = item.cloneNode(true) as HTMLElement;
@@ -86,13 +85,14 @@ export default function registDND(onDrop: (event: DropEvent) => void) {
 
     document.body.style.cursor = 'grabbing';
     document.body.appendChild(ghostItem);
+    //--- Ghost 만들기 END
 
     document.querySelectorAll<HTMLElement>('.dnd-item:not(.ghost)').forEach((item) => {
       item.style.transition = 'all 200ms ease';
     });
-    //--- Ghost 만들기 END
 
     const moveHandler = (moveEvent: MouseEvent | TouchEvent) => {
+      // Touch 이벤트에서 moveEvent와 scrollEvent가 겹치지 않도록 가능하면 방지한다.
       if (moveEvent.cancelable) moveEvent.preventDefault();
 
       //--- Ghost Drag
@@ -101,7 +101,6 @@ export default function registDND(onDrop: (event: DropEvent) => void) {
       ghostItem.style.left = `${itemRect.left + deltaX}px`;
       //--- Ghost Drag END
 
-      //
       //--- Drop 영역 확인
       const ghostItemRect = ghostItem.getBoundingClientRect();
 
@@ -173,12 +172,12 @@ export default function registDND(onDrop: (event: DropEvent) => void) {
       const distance = itemRect.height + ITEM_MARGIN;
 
       destinationItem = currentDestinationItem;
-      const isDestinationMoved = destinationItem.classList.contains('moved');
       destination = currentDestinationItem.closest<HTMLElement>('[data-droppable-id]');
       destinationDroppableId = destination?.dataset.droppableId + '';
 
       // 위에서 아래로 간다면 (ex. index 1 -> 3)
       const isForward = currentSourceIndex < currentDestinationIndex;
+      const isDestinationMoved = destinationItem.classList.contains('moved');
       let indexDiff = currentDestinationIndex - currentSourceIndex;
       if (isDestinationMoved) {
         indexDiff += isForward ? -1 : 1;
@@ -187,18 +186,6 @@ export default function registDND(onDrop: (event: DropEvent) => void) {
 
       const transX = indexDiff * distance;
       currentSourceItem.style.transform = `translate3d(0, ${transX}px, 0)`;
-
-      currentDestinationItem.classList.add('moving');
-      currentDestinationItem.addEventListener(
-        'transitionend',
-        () => {
-          currentDestinationItem?.classList.remove('moving');
-        },
-        { once: true },
-      );
-      setTimeout(() => {
-        currentDestinationItem?.classList.remove('moving');
-      }, 200);
 
       let target = currentDestinationItem;
       while (
@@ -220,6 +207,18 @@ export default function registDND(onDrop: (event: DropEvent) => void) {
           ) as HTMLElement;
         }
       }
+
+      currentDestinationItem.classList.add('moving');
+      currentDestinationItem.addEventListener(
+        'transitionend',
+        () => {
+          currentDestinationItem?.classList.remove('moving');
+        },
+        { once: true },
+      );
+      setTimeout(() => {
+        currentDestinationItem?.classList.remove('moving');
+      }, 200);
       //--- Drop 영역 확인 END
     };
 
@@ -232,6 +231,7 @@ export default function registDND(onDrop: (event: DropEvent) => void) {
       clearDroppableShadow();
 
       const itemRect = sourceItem.getBoundingClientRect();
+      ghostItem.classList.add('moving');
       ghostItem.style.left = `${itemRect.left}px`;
       ghostItem.style.top = `${itemRect.top}px`;
       ghostItem.style.opacity = '1';
@@ -243,13 +243,13 @@ export default function registDND(onDrop: (event: DropEvent) => void) {
       ghostItem.addEventListener(
         'transitionend',
         () => {
-          document.querySelectorAll<HTMLElement>('.dnd-item').forEach((item) => {
-            item.removeAttribute('style');
-            item.classList.remove('moving', 'moved');
-          });
-
           // 💥 react rerender 이후로 실행되는 꼼수
           setTimeout(() => {
+            document.querySelectorAll<HTMLElement>('.dnd-item').forEach((item) => {
+              item.removeAttribute('style');
+              item.classList.remove('moving', 'moved');
+            });
+
             item.classList.add('dnd-item');
             item.removeAttribute('style');
             movingItem?.remove();
