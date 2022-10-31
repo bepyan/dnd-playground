@@ -12,10 +12,10 @@ https://velog.io/@bepyan/series/DND-뽀개기
 
 ![](https://velog.velcdn.com/images/bepyan/post/10219eb9-d877-4604-9f68-f9fac3cf682c/image.gif)
 
-![image](https://user-images.githubusercontent.com/65283190/199069816-25fafda5-b855-413b-80c9-3756fbabf7be.png)
+![image](https://velog.velcdn.com/images/bepyan/post/094c30d9-3e53-4427-aefa-766cdb841d03/image.gif)
 
-![image](https://user-images.githubusercontent.com/65283190/199069783-7699eeb5-4147-4ed7-99be-6fe8ba721c6b.png)
+![image](https://velog.velcdn.com/images/bepyan/post/cd776d77-2036-4df0-a3ae-58b1e8815b02/image.gif)
 
-![image](https://user-images.githubusercontent.com/65283190/199069755-ac04820e-991a-4e16-92f2-c5063c825ff8.png)
+![image](https://velog.velcdn.com/images/bepyan/post/e7b691c1-c6c2-4518-84d9-1326b591ef52/image.gif)
 
 ![2022-11-01 02 18 14](https://user-images.githubusercontent.com/65283190/199069255-50234d9f-df8b-4e25-97f6-645285e1e81d.gif)
