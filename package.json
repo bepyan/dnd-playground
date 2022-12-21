@@ -5,14 +5,18 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "postbuild": "next-sitemap",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "add": "^2.0.6",
     "next": "12.3.1",
+    "next-sitemap": "^3.1.43",
     "react": "18.2.0",
     "react-beautiful-dnd": "^13.1.1",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "yarn": "^1.22.19"
   },
   "devDependencies": {
     "@types/node": "18.7.18",
