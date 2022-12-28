@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://dnd-playground.vercel.app/
+
+# Sitemaps
+Sitemap: https://dnd-playground.vercel.app/sitemap.xml
